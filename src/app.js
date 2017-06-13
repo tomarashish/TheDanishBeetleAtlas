@@ -55,6 +55,9 @@ d3.json("../data/denmark.topo.json", function(error, map) {
     aa = [562915,6368343];
 	bb = [624379, 6076707];
   
+  var projectionCords = d3.geoMercator();
+          
+  
   console.log(projection(aa));
 
     //Add markers to map based on coordinates
@@ -62,8 +65,8 @@ d3.json("../data/denmark.topo.json", function(error, map) {
     svg.selectAll("circle")
 		.data([aa]).enter()
 		.append("circle")
-		.attr("cx", function (d) { return d3.geoMercator(d)[0]; })
-		.attr("cy", function (d) { return d3.geoMercator(d)[1]; })
+		.attr("cx", function (d) { return projectionCords(d)[0]; })
+		.attr("cy", function (d) { return projectionCords(d)[1]; })
 		.attr("r", "8px")
 		.attr("fill", "red")  
 
