@@ -9,13 +9,18 @@
   <!-- using local jquery, bootstrap and d3.js libs -->
   <script type="text/javascript" src="src/jquery.js"></script>
   <script src="src/bootstrap.min.js"></script>
+  <script src="src/bootstrap-left-slide-menu.js"></script>
+  
   <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
-<script src="http://d3js.org/topojson.v1.min.js"></script>
+  <script src="http://d3js.org/topojson.v1.min.js"></script>
   
   <!-- css script --
-  <!--script-->
+  <!--bootstrap and sidebar css--> 
   <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="css/bootstrap-left-slide-menu.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
+ 
   
   <!-- fontawesome and custom css -->
   <!--link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"-->
@@ -58,17 +63,43 @@
     </div>
   </footer>
 
-  <!-- Library Description -->
-  <div class="container-fluid">
-    
-
-      <div class="col-md-12 col-xs-12">
-        <div id="map" >
+   <div id="wrapper" class="">
+    <div class="overlay" style="display: none;"></div>
+    <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
+        <ul class="nav sidebar-nav"> 
+            <li class="sidebar-brand">
+                <a> <h2>Control Panel</h2></a>
+            </li>
+            <li>
+                <a href="#"><i class=""></i>Diversity View </a>
+            </li>
+           <li>
+                <a href="#"><i class=""></i>Species View </a>
+            </li>
+          <li>
+                <a href="#"><i class=""></i>Color By</a>
+            </li>
+        </ul>
+    </nav>
+    <div id="page-content-wrapper">
+        <button type="button" class="hamburger animated fadeInLeft is-closed" data-toggle="offcanvas">
+            <span class="hamb-top"></span>
+            <span class="hamb-middle"></span>
+            <span class="hamb-bottom"></span>
+        </button>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12 col-sm-12">
+              <div id="map"></div>
+            </div>  
+          </div>
         </div>
-      </div>
     </div>
+</div>
+    <!-- /#wrapper -->
    
   <script src="src/app.js"></script>
+  
 </body>
 
 </html>

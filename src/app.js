@@ -21,12 +21,9 @@ d3.json("../data/denmark.topo.json", function(error, map) {
 
   	console.log(map)
   
-  var groups = svg.selectAll("g")
+  svg.selectAll("path")
     .data(topojson.feature(map, map.objects.denmarktopo).features)
-    .enter().append("g");
-  
-  
-    groups.append("path")
+    .enter().append("path")
       .attr("d", path)
       .style("fill", "none")
       .style("stroke", "#575757")
@@ -55,17 +52,19 @@ d3.json("../data/denmark.topo.json", function(error, map) {
     */
   
   // fake cordinate points
-    aa = [-122.490402, 37.786453];
-	bb = [-122.389809, 37.72728];
+    aa = [562915,6368343];
+	bb = [624379, 6076707];
+  
+  console.log(projection(aa));
+
     //Add markers to map based on coordinates
   // add circles to svg
-    groups.selectAll("circle")
+    svg.selectAll("circle")
 		.data([aa]).enter()
 		.append("circle")
-		.attr("cx", function (d) { console.log(projection(d)); return projection(d)[0]; })
-		.attr("cy", function (d) { return projection(d)[1]; })
+		.attr("cx", function (d) { return d3.geoMercator(d)[0]; })
+		.attr("cy", function (d) { return d3.geoMercator(d)[1]; })
 		.attr("r", "8px")
-		.attr("fill", "red")
-  
+		.attr("fill", "red")  
 
 });
