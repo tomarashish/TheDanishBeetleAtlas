@@ -17,7 +17,7 @@ var svg = d3.select("#map").append("svg")
 	.attr("preserveAspectRatio", "xMidYMid");
 
 
-d3.json("../data/denmark.topo.json", function(error, map) {
+d3.json("../data/denmark-counties.json", function(error, map) {
 
   	console.log(map)
   
