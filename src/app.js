@@ -52,22 +52,34 @@ d3.json("../data/denmark.topo.json", function(error, map) {
     */
   
   // fake cordinate points
-    aa = [562915,6368343];
-	bb = [624379, 6076707];
+    a = [10.048482,57.453396];
+	b = [10.935943,54.822046];
+    c =[8.462128,55.3937]
+    d = [8.88405,56.366219]
+    
+    //https://github.com/proj4js/proj4js
+    var utm = "+proj=utm +zone=32";
+    var wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
+    
+  console.log(proj4(utm,wgs84,[6246846,492837]));
   
   var projectionCords = d3.geoMercator();
           
   
-  console.log(projection(aa));
+  console.log(c[0],c[1]);
 
     //Add markers to map based on coordinates
   // add circles to svg
-    svg.selectAll("circle")
-		.data([aa]).enter()
+    var circles = svg.selectAll("circle")
+		.data([a,b,c,d]).enter()
 		.append("circle")
-		.attr("cx", function (d) { return projectionCords(d)[0]; })
-		.attr("cy", function (d) { return projectionCords(d)[1]; })
-		.attr("r", "8px")
-		.attr("fill", "red")  
+		.attr("cx", function (d) { return projection(d)[0]; })
+		.attr("cy", function (d) { return projection(d)[1]; })
+		.attr("r", "10px")
+        .style("fill","steelblue")
+        .style("fill-opcity", "0.7")
+        .style("stroke", "#cccccc")
+      	.style("stroke-width", "2.5");
+    
 
 });
