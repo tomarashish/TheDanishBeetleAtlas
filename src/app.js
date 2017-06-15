@@ -8,8 +8,9 @@ var width = 1200,
 	    .translate([-1000, 9350])
         .scale(7500);
       
+var showToolTip = true;
 
-    var path = d3.geoPath()
+var path = d3.geoPath()
       .projection(projection);
 
 
@@ -79,13 +80,53 @@ d3.json("../data/denmark.topo.json", function(error, map) {
 		.attr("cy", function (d) { return projection(d)[1]; })
 		.attr("r", "1px")
         //.style("fill","#648d9e");
-        .style("fill","#00485d");
+        .style("fill", function(d){
+          
+            if(d.Taxon)
+              return color(d.Taxon)
+            
+            if(d.Family)
+              return color(d.Family)
+            
+            else
+              return "#00485d";
+        })
    // Modification of custom tooltip code provided by Malcolm Maclean, "D3 Tips and Tricks"
 	// http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
-    
+    .on("mouseover", function(d){
+      
+      if(showToolTip == true){
+        div.transition()
+          .duration(500)
+          .style("opacity", 0.9)
+          .style("text-align", "center")
+          .style("background", "#fff8dc")
+          .style("border", "2px solid")
+          .style("border-color", "black")
+	       .style("border-radius", "3px")
+	       .style("pointer-events", "none");    
+        
+        div.text("coordinates are : " + d)
+          .attr("width", "100px")
+          .attr("height", "500px")
+          .style("left", (d3.event.pageX + 10) + "px")
+          .style("top", (d3.event.pageY +     30) + "px");
+      }
+      
+    })
+    .on("mouseout", function(d){
+      
+      if(showToolTip == true){
+        div.transition()
+          .duration(100)
+          .style("opacity", 0);
+      }
+    });
     
     //Add Zooming and panning
     
+    /* Style for Custom Tooltip */
+
     
     /*
     //Add hexagonal bins with hovering over shows tooltip with piechart
