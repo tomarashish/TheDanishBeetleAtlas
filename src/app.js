@@ -1,4 +1,7 @@
- var width = 1200,
+ //https://blog.madewithenvy.com/local-maps-with-canvas-d3-38ea389fca30
+//
+
+var width = 1200,
      height = 800;
 
       var projection = d3.geoMercator()
@@ -16,6 +19,13 @@ var svg = d3.select("#map").append("svg")
     .attr("viewBox", "0 0 900 800")
 	.attr("preserveAspectRatio", "xMidYMid");
 
+var hexbin = d3.hexbin()
+    .extent([[0, 0], [width, height]])
+    .radius(10);
+
+var radius = d3.scaleSqrt()
+    .domain([0, 12])
+    .range([0, 10]);
 
 d3.json("../data/denmark.topo.json", function(error, map) {
 
@@ -25,61 +35,59 @@ d3.json("../data/denmark.topo.json", function(error, map) {
     .data(topojson.feature(map, map.objects.denmarktopo).features)
     .enter().append("path")
       .attr("d", path)
-      .style("fill", "none")
-      .style("stroke", "#575757")
-      .style("stroke-width", "2.5");
+      .style("fill", "#f5eede")
+      //.style("stroke", "#648d9e")
+      .style("stroke-width", "2px");
   
-  
-  //http://bl.ocks.org/zanarmstrong/a40f50dc6a16844d5346
-  //http://bl.ocks.org/phil-pedruco/7745589
-  
-    //add circular points from centriod 
-    /*groups.each(function(d,i){
-        
-      var center = projection(d3.geoCentroid(d)); 
-      
-      d3.select(this)
-        .append("circle")
-        .attr("cx", center[0])
-        .attr("cy", center[1])
-        .attr("r", "9px")
-        .style("fill","lightgrey")
-        .style("fill-opcity", "0.8")
-        .style("stroke", "#cccccc")
-      	.style("stroke-width", "0.5");
-      
-    })
-    */
-  
-  // fake cordinate points
-    a = [10.048482,57.453396];
-	b = [10.935943,54.822046];
-    c =[8.462128,55.3937]
-    d = [8.88405,56.366219]
     
     //https://github.com/proj4js/proj4js
     var utm = "+proj=utm +zone=32";
     var wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
     
-  console.log(proj4(utm,wgs84,[6246846,492837]));
+  queue()
+	.defer(d3.csv, '../data/StednavneExxel.csv')
+	.defer(d3.csv, '../data/BillekatalogSamlet.csv')
+	.await(createMap);
   
-  var projectionCords = d3.geoMercator();
-          
-  
-  console.log(c[0],c[1]);
-
+  //create map from combined data
+  function createMap(error, cordsData, speciesData ){
+    console.log(cordsData[0])
+    var cords = [];
+    
+    for( var i = 0; i < cordsData.length; i++){
+      
+      //console.log(proj4(utm,wgs84,[6246846,492837]));
+      //console.log(proj4(utm,wgs84,[data[i].XKoord, data[i].YKoord]));
+      
+      cords.push(proj4(utm,wgs84,[cordsData[i].XKoord, cordsData[i].YKoord]))
+    }//end of for loop
+         
+    
     //Add markers to map based on coordinates
   // add circles to svg
+    
     var circles = svg.selectAll("circle")
-		.data([a,b,c,d]).enter()
+		.data(cords).enter()
 		.append("circle")
 		.attr("cx", function (d) { return projection(d)[0]; })
 		.attr("cy", function (d) { return projection(d)[1]; })
-		.attr("r", "10px")
-        .style("fill","steelblue")
-        .style("fill-opcity", "0.7")
-        .style("stroke", "#cccccc")
-      	.style("stroke-width", "2.5");
+		.attr("r", "1px")
+        //.style("fill","#648d9e");
+        .style("fill","#00485d");
     
-
+    
+    //Add Zooming and panning
+    
+    /*
+    //Add hexagonal bins with hovering over shows tooltip with piechart
+     svg.append("g")
+      .attr("class", "hexagon")
+    .selectAll("path")
+    .data(hexbin(cordsData).sort(function(a, b) { return b.length - a.length; }))
+    .enter().append("path")
+      .attr("d", function(d) { return hexbin.hexagon(radius(2)); })
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+      */
+  }//end f cordinates csv
+  
 });
