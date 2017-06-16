@@ -1,11 +1,17 @@
 
 var data = d3.range(800).map(Math.random);
 
-var svg = d3.select("#slider"),
-    margin = {top: 194, right: 50, bottom: 214, left: 50},
+
+  var margin = {top: 194, right: 50, bottom: 214, left: 50},
     width = 1200,
-    height = 800,
-    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    height = 800;
+    
+   var svgSlider = d3.select("#slider").append("g")
+      .attr("width", 1200)
+      .attr("height", 800)
+      .attr("viewBox", "0 0 900 800")
+	  .attr("preserveAspectRatio", "xMidYMid")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var x = d3.scaleLinear().range([0, width]),
     y = d3.randomNormal(height / 2, height / 8);
@@ -14,12 +20,12 @@ var brush = d3.brushX()
     .extent([[0, 0], [width, height]])
     .on("start brush end", brushmoved);
 
-g.append("g")
+svgSlider.append("g")
     .attr("class", "axis axis--x")
     .attr("transform", "translate(0," + height + ")")
     .call(d3.axisBottom(x));
 
-var circle = g.append("g")
+var circle = svgSlider.append("g")
     .attr("class", "circle")
   .selectAll("circle")
   .data(data)
@@ -27,7 +33,7 @@ var circle = g.append("g")
     .attr("transform", function(d) { return "translate(" + x(d) + "," + y() + ")"; })
     .attr("r", 3.5);
 
-var gBrush = g.append("g")
+var gBrush = svgSlider.append("g")
     .attr("class", "brush")
     .call(brush);
 

@@ -14,7 +14,7 @@ var path = d3.geoPath()
       .projection(projection);
 
 
-var svg = d3.select("#map").append("svg")
+var svgMap = d3.select("#map").append("svg")
     .attr("width", "100%")
     .attr("height", height)
     .attr("viewBox", "0 0 900 800")
@@ -39,7 +39,7 @@ var color = d3.scaleOrdinal(d3.schemeCategory20b);
 
 d3.json("./../data/denmark.topo.json", function(error, map) {
   
-  svg.selectAll("path")
+  svgMap.selectAll("path")
     .data(topojson.feature(map, map.objects.denmarktopo).features)
     .enter().append("path")
       .attr("d", path)
@@ -73,7 +73,7 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
     
     //Add markers to map based on coordinates
   // add circles to svg
-    var circles = svg.selectAll("circle")
+    var circles = svgMap.selectAll("circle")
 		.data(cords).enter()
 		.append("circle")
 		.attr("cx", function (d) { return projection(d)[0]; })
@@ -138,17 +138,17 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
       return d;
     })
     
-     svg.append("g")
+     svgMap.append("g")
       .attr("class", "hexagon")
-    .selectAll("path")
-    .data(hexbin(hexabinData).sort(function(a, b) { return b.length - a.length; }))
-    .enter().append("path")
+      .selectAll("path")
+      .data(hexbin(hexabinData).sort(function(a, b) { return b.length - a.length; }))
+      .enter().append("path")
       .attr("d", function(d) { return hexbin.hexagon(radius(2)); })
       .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
       .attr("fill", function(d) { return color(d3.median(d, function(d,i) { return i; })); });
     
     //Adding image marker with map
-    svg.selectAll(".mark")
+    svgMap.selectAll(".mark")
     .data(cords)
     .enter()
     .append("image")

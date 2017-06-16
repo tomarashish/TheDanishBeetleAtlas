@@ -273,10 +273,10 @@ text {
   position: absolute;
   left: 40px;
   margin: 5px 5px!important;
-  font-size: 25px !important;
-  font-weight: bold;
+  font-size: 28px !important;
   font-family: 'Dosis', Arial, sans-serif;
   padding: 20px 20px!important;
+  line-height: 1em;
 }
 
 
@@ -295,7 +295,7 @@ text {
   right: 30px !important;
   font-family: 'Dosis', sans-serif;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 22px;
   line-height: 1.42857;
   margin: 10px 10px;
   padding: 20px 10px;
