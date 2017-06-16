@@ -386,3 +386,8 @@ li{
   font-size: 22px;
   color: #fcf8e3;
 }
+
+.map-glow use {
+  fill-opacity: .2;
+  filter: url(#blur);
+}

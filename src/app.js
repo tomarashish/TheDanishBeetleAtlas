@@ -5,7 +5,7 @@ var width = 1200,
      height = 800;
 
       var projection = d3.geoMercator()
-	    .translate([-1000, 9350])
+	    .translate([-1200, 9350])
         .scale(7500);
       
 var showToolTip = true;
@@ -37,7 +37,7 @@ var div = d3.select("body")
 var color = d3.scaleOrdinal(d3.schemeCategory20b);
 
 
-d3.json("../data/denmark.topo.json", function(error, map) {
+d3.json("./../data/denmark.topo.json", function(error, map) {
   
   svg.selectAll("path")
     .data(topojson.feature(map, map.objects.denmarktopo).features)
@@ -48,7 +48,7 @@ d3.json("../data/denmark.topo.json", function(error, map) {
       .style("stroke-width", "2px");
     
   queue()
-    .defer(d3.csv, '../data/merge_data.csv')
+    .defer(d3.csv, './../data/merge_data.csv')
 	.await(createMarker);
   
   //create map from combined data
@@ -146,8 +146,6 @@ d3.json("../data/denmark.topo.json", function(error, map) {
       .attr("d", function(d) { return hexbin.hexagon(radius(2)); })
       .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
       .attr("fill", function(d) { return color(d3.median(d, function(d,i) { return i; })); });
-     
-    
     
     //Adding image marker with map
     svg.selectAll(".mark")
