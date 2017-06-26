@@ -1,5 +1,5 @@
  //https://blog.madewithenvy.com/local-maps-with-canvas-d3-38ea389fca30
-//
+//http://download.geonames.org/export/dump/
 
 var width = 1200,
      height = 800;
@@ -61,8 +61,8 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
     
     var cords = [];
     
-    for( var i = 0; i < atlasData.length; i++){
-    //for( var i = 0; i < 100; i++){
+      for( var i = 0; i < atlasData.length; i++){
+      //for( var i = 0; i < 500; i++){
       
       //console.log(proj4(utm,wgs84,[6246846,492837]));
       //console.log(proj4(utm,wgs84,[data[i].XKoord, data[i].YKoord]));
@@ -70,7 +70,7 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
         cords.push(proj4(utm,wgs84,[atlasData[i].XKoord, atlasData[i].YKoord]))
     }//end of for loop
          
-    
+  
     //Add markers to map based on coordinates
   // add circles to svg
     var circles = svgMap.selectAll("circle")
@@ -78,7 +78,7 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
 		.append("circle")
 		.attr("cx", function (d) { return projection(d)[0]; })
 		.attr("cy", function (d) { return projection(d)[1]; })
-		.attr("r", "1px")
+		.attr("r", "2px")
         //.style("fill","#648d9e");
         .style("fill", function(d){
           
@@ -146,7 +146,8 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
       .attr("d", function(d) { return hexbin.hexagon(radius(2)); })
       .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
       .attr("fill", function(d) { return color(d3.median(d, function(d,i) { return i; })); });
-    
+        */
+    /*
     //Adding image marker with map
     svgMap.selectAll(".mark")
     .data(cords)
@@ -157,8 +158,8 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
     .attr('height', 40)
     .attr("xlink:href",'data/img/beetle1.png')
     .attr("transform", function(d) {return "translate(" + projection([d[0],d[1]]) + ")";});
+
     */
-    
     //Heatmap 
     //http://bl.ocks.org/kaijiezhou/82d0b794e845294b366e
     

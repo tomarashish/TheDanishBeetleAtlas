@@ -388,7 +388,33 @@ li{
   color: #fcf8e3;
 }
 
-.map-glow use {
-  fill-opacity: .2;
-  filter: url(#blur);
+/*Slider css*/
+.ticks {
+  font: 20px sans-serif;
+}
+
+.track,
+.track-inset,
+.track-overlay {
+  stroke-linecap: round;
+}
+
+.track {
+  stroke: #000;
+  stroke-opacity: 0.3;
+  stroke-width: 10px;
+}
+
+
+.track-overlay {
+  pointer-events: stroke;
+  stroke-width: 10px;
+  cursor: hand;
+}
+
+.handle {
+  fill: #000;
+  stroke: #000;
+  stroke-opacity: 0.3;
+  stroke-width: 7px;
 }
