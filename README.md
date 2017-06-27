@@ -11,3 +11,9 @@ MAP VISUALIZATION
 Type :  Biodiversity visualization 
 Goal of visualization :  Representation of biodiversity data over a geographical map.
 Data Format : CSV File
+
+
+//Install d3, csv-write-stream, google geocoder api via node
+https://www.npmjs.com/package/csv-write-stream
+https://github.com/googlemaps/google-maps-services-js
+http://blockbuilder.org/renecnielsen/5efac1d87d1974d4190d
