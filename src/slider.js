@@ -1,3 +1,5 @@
+//https://bl.ocks.org/linoba/ecfc96ae52d5f8b8a7435ee5ab49635a
+
 var margin = {right: 50, left: 50, top:20, bottom:50},
   width = 700,
     height= 50,
@@ -7,11 +9,13 @@ var svg = d3.select("#slider").append("svg")
       .attr("width", width)
       .attr("height", height);
 
+//x axis scale for first slider handle
 var xFirst = d3.scaleLinear()
     .domain([1900, 2017])
     .range([0, sliderWidth])
     .nice();
 
+//x axis scale for second slide
 var xLast = d3.scaleLinear()
     .domain([1900, 2017])
     .range([0, sliderWidth])

@@ -36,6 +36,7 @@ var div = d3.select("body")
 //https://bl.ocks.org/pstuffa/3393ff2711a53975040077b7453781a9
 var color = d3.scaleOrdinal(d3.schemeCategory20b);
 
+var colorByFamily = true, colorByTaxon = false, colorNone = false;
 
 d3.json("./../data/denmark.topo.json", function(error, map) {
   
@@ -65,7 +66,8 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
       //for( var i = 0; i < 500; i++){
       
       //console.log(proj4(utm,wgs84,[6246846,492837]));
-      //console.log(proj4(utm,wgs84,[data[i].XKoord, data[i].YKoord]));
+      //console.log(atlasData[i].XKoord, atlasData[i].YKoord);
+        
       if(atlasData[i].XKoord != "NA" || atlasData[i].YKoord != "NA")
         cords.push(proj4(utm,wgs84,[atlasData[i].XKoord, atlasData[i].YKoord]))
     }//end of for loop
@@ -80,16 +82,17 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
 		.attr("cy", function (d) { return projection(d)[1]; })
 		.attr("r", "2px")
         //.style("fill","#648d9e");
-        .style("fill", function(d){
+        .style("fill", function(d,i){
           
-            if(d.Taxon)
-              return color(d.Taxon)
+            //if(colorByTaxon == false)
+             // return color(d.Taxon);
+            //console.log(d)
+            return color(i);
+            //if(colorByFamily == true)
+              //return color(d.Family);
             
-            if(d.Family)
-              return color(d.Family)
-            
-            else
-              return "#00485d";
+            //if(colorNone == false)
+              //return "#00485d";
         })
    // Modification of custom tooltip code provided by Malcolm Maclean, "D3 Tips and Tricks"
 	// http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
