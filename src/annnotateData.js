@@ -1,6 +1,8 @@
 //Add geoCoordinates for missing data and change
 // Change UTM cordinates to Lat Long format
 //
+
+
  queue()
     .defer(d3.csv, './../data/merge_data.csv')
 	.await(getCoordinates);
@@ -28,7 +30,7 @@ function getCoordinates(error, atlasData){
             'address': address
         }, function (results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
-               console.log(results[0]);
+              // console.log(results[0]);
             }
         });
       }

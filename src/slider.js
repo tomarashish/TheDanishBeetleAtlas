@@ -1,13 +1,13 @@
 //https://bl.ocks.org/linoba/ecfc96ae52d5f8b8a7435ee5ab49635a
 
 var margin = {right: 50, left: 50, top:20, bottom:50},
-  width = 700,
-    height= 50,
+  slideWidth = 700,
+    slideHeight= 50,
     sliderWidth = 600;
 
-var svg = d3.select("#slider").append("svg")
-      .attr("width", width)
-      .attr("height", height);
+var svgSlider = d3.select("#slider").append("svg")
+      .attr("width", slideWidth)
+      .attr("height", slideHeight);
 
 //x axis scale for first slider handle
 var xFirst = d3.scaleLinear()
@@ -21,13 +21,13 @@ var xLast = d3.scaleLinear()
     .range([0, sliderWidth])
     .clamp(true);
 
-var sliderFirst = svg.append("g")
+var sliderFirst = svgSlider.append("g")
     .attr("class", "slider")
-    .attr("transform", "translate(" + margin.left + "," +height/2 + ")");
+    .attr("transform", "translate(" + margin.left + "," +slideHeight/2 + ")");
 
-var sliderLast = svg.append("g")
+var sliderLast = svgSlider.append("g")
   .attr("class", "slider")
-  .attr("transform", "translate(" + margin.left + "," +height/2 + ")");
+  .attr("transform", "translate(" + margin.left + "," +slideHeight/2 + ")");
 
 sliderFirst.append("line")
     .attr("class", "track")
