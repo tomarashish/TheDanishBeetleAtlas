@@ -418,3 +418,13 @@ li{
   stroke-opacity: 0.3;
   stroke-width: 7px;
 }
+
+.barlegend text{
+  fill: #000 !important;
+  font-size: 20px;
+}
+
+.axis text{
+  fill: #000 !important;
+  font-size: 20px;
+}
