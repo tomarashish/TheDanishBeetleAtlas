@@ -10,6 +10,8 @@ var showToolTip = true;
 var path = d3.geoPath()
       .projection(projection);
 
+var minYear,
+    maxYear;
 
 var svgMap = d3.select("#map").append("svg")
     .attr("width", "100%")
@@ -52,32 +54,36 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
   //create map from combined data
   function createMarker(error, atlasData ){
   
-    console.log(atlasData)
+    //console.log(atlasData)
     //https://github.com/proj4js/proj4js
     var utm = "+proj=utm +zone=32";
     var wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
-    
     var cords = [];
-    
       for( var i = 0; i < atlasData.length; i++){
       //for( var i = 0; i < 500; i++){
       
       //console.log(proj4(utm,wgs84,[6246846,492837]));
       //console.log(atlasData[i].XKoord, atlasData[i].YKoord);
         
-      if(atlasData[i].XKoord != "NA" || atlasData[i].YKoord != "NA")
+      if(atlasData[i].XKoord != "NA" || atlasData[i].YKoord != "NA"){
+         var LatLang = [];
+        
         cords.push(proj4(utm,wgs84,[atlasData[i].XKoord, atlasData[i].YKoord]))
+          
+          atlasData[i].LatLang = proj4(utm,wgs84,[atlasData[i].XKoord, atlasData[i].YKoord]);
+      }
     }//end of for loop
-         
-  
+    console.log(cords) 
+    console.log(atlasData)
+    
     //Add markers to map based on coordinates
   // add circles to svg
     var circles = svgMap.selectAll("circle")
-		.data(cords).enter()
+		.data(atlasData).enter()
 		.append("circle")
-        //.filter(function(d) {return d.DateYear > 1900 })
-		.attr("cx", function (d) { return projection(d)[0]; })
-		.attr("cy", function (d) { return projection(d)[1]; })
+        .filter(function(d) {return d.DateYear < 1900 })
+		.attr("cx", function (d) { if(d.LatLang)return projection(d.LatLang)[0]; })
+		.attr("cy", function (d) { if(d.LatLang) return projection(d.LatLang)[1]; })
 		.attr("r", "2px")
         //.style("fill","#648d9e");
         .style("fill", function(d,i){

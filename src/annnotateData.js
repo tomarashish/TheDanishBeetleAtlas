@@ -12,12 +12,14 @@ function getCoordinates(error, atlasData){
   //https://github.com/proj4js/proj4js
     var utm = "+proj=utm +zone=32";
     var wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
-    var cords = []
+    
+  //change UTm to latlang
    for( var i = 0; i < atlasData.length; i++){
     
    if(atlasData[i].XKoord != "NA" || atlasData[i].YKoord != "NA"){
-      cords.push(proj4(utm,wgs84,[atlasData[i].XKoord, atlasData[i].YKoord]));
-   }
+         var LatLang = [];
+          atlasData[i].LatLang = proj4(utm,wgs84,[atlasData[i].XKoord, atlasData[i].YKoord]);
+      }
     //end of for loop
     else{
       

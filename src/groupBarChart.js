@@ -113,6 +113,7 @@ d3.select("#species").on("click", function(){
   //update y axis
   svgBarChart
     .transition()
+    .duration(1)
       .attr("class", "axis")
       .call(yAxis);
   
@@ -137,7 +138,8 @@ d3.select("#family").on("click", function(){
   
   //update y axis 
    svgBarChart
-    .transition()
+   .transition()
+    .duration(1)
    .attr("class", "axis")
       .call(yAxis);
   
