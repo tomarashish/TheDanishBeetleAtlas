@@ -75,6 +75,7 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
     var circles = svgMap.selectAll("circle")
 		.data(cords).enter()
 		.append("circle")
+        //.filter(function(d) {return d.DateYear > 1900 })
 		.attr("cx", function (d) { return projection(d)[0]; })
 		.attr("cy", function (d) { return projection(d)[1]; })
 		.attr("r", "2px")

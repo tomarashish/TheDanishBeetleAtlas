@@ -63,10 +63,6 @@ d3.csv("../data/bardata.csv", function(error, _data) {
 });
 
 function drawChart(){
-
-   var t = d3.transition()
-            .duration(1000)
-            .ease(d3.easeLinear)
    
    // Scale the range of the data in the domains
   x.domain(data.map(function(d) { return d.Years; }));
@@ -117,7 +113,6 @@ d3.select("#species").on("click", function(){
   //update y axis
   svgBarChart
     .transition()
-    .duration(100)
       .attr("class", "axis")
       .call(yAxis);
   
@@ -134,8 +129,6 @@ d3.select("#family").on("click", function(){
   
    svgBarChart.selectAll(".bar")
     .transition()
-    .duration(1000)
-    .ease(d3.easeLinear)
     .attr("y", function(d) { return y(d.Families); })
       .attr("height", function(d) { return heightBar - y(d.Families); })
       .attr("fill", function(d,i){
@@ -145,7 +138,6 @@ d3.select("#family").on("click", function(){
   //update y axis 
    svgBarChart
     .transition()
-    .duration(100)
    .attr("class", "axis")
       .call(yAxis);
   

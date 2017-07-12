@@ -402,21 +402,21 @@ li{
 .track {
   stroke: #000;
   stroke-opacity: 0.3;
-  stroke-width: 10px;
+  stroke-width: 5px;
 }
 
 
 .track-overlay {
   pointer-events: stroke;
-  stroke-width: 10px;
-  cursor: hand;
+  stroke-width: 5px;
 }
 
 .handle {
   fill: #000;
   stroke: #000;
   stroke-opacity: 0.3;
-  stroke-width: 7px;
+  stroke-width: 20px;
+  cursor: hand;
 }
 
 .barlegend text{
