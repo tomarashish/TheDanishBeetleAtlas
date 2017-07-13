@@ -81,12 +81,19 @@ function drawChart(){
           return colorScale(i)
       });
 
+  //
+   svgBarChart.append("text")
+  .attr("transform", "translate(180," + 0 + ")")
+  .style("font-size", "20px")
+  .style("fill", "#000")
+  .text("No Of Families");
+  
   // add the x Axis
   svgBarChart.append("g")
       .attr("class", "axis")
       .attr("transform", "translate(0," + heightBar + ")")
       .call(xAxis);
-
+  
   // add the y Axis
   svgBarChart.append("g")
   .attr("class", "axis")
@@ -130,11 +137,19 @@ d3.select("#family").on("click", function(){
   
    svgBarChart.selectAll(".bar")
     .transition()
+    .duration(1000)
+    .ease(d3.easeLinear)
     .attr("y", function(d) { return y(d.Families); })
       .attr("height", function(d) { return heightBar - y(d.Families); })
       .attr("fill", function(d,i){
           return colorScale(i)
       });
+  
+   svgBarChart.append("text")
+  .attr("transform", "translate(180," + 0 + ")")
+  .style("font-size", "20px")
+  .style("fill", "#000")
+  .text("No Of Families");
   
   //update y axis 
    svgBarChart

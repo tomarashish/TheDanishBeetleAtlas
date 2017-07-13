@@ -437,9 +437,12 @@ li{
 
 #view_selection .btn{
   font-size: 20px;
+   color: #000;
 }
-.btn.active, .btn:active{
- background-color:darkgrey;
+/*
+#view_selection .btn.active{
+  color: #000;
   box-shadow: 0 4px 8px rgba(0,0,0,.50),0 4px 8px rgba(0,0,0,.50);
     transition: box-shadow .128s cubic-bezier(.4,0,.2,1);
 }
+*/
