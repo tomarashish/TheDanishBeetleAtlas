@@ -54,7 +54,10 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
   //create map from combined data
   function createMarker(error, atlasData ){
   
-    //console.log(atlasData)
+    maxYear = d3.max(atlasData, function(d){ return +d.DateYear; });
+    minYear = d3.min(atlasData, function(d) { return +d.DateYear; });
+    
+    console.log(maxYear)
     //https://github.com/proj4js/proj4js
     var utm = "+proj=utm +zone=32";
     var wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
@@ -73,15 +76,21 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
           atlasData[i].LatLang = proj4(utm,wgs84,[atlasData[i].XKoord, atlasData[i].YKoord]);
       }
     }//end of for loop
-    console.log(cords) 
-    console.log(atlasData)
-    
+  
+    circleMarker(atlasData)
     //Add markers to map based on coordinates
   // add circles to svg
-    var circles = svgMap.selectAll("circle")
-		.data(atlasData).enter()
+    function circleMarker(markerData){
+      
+       console.log(markerData)
+       
+      var circles = svgMap.selectAll(".circle")
+		.data(markerData)
+      
+      circles.enter()
 		.append("circle")
-        .filter(function(d) {return d.DateYear < 1900 })
+        .attr("class", "circle")
+        //.filter(function(d) {return d.DateYear < 1900 })
 		.attr("cx", function (d) { if(d.LatLang)return projection(d.LatLang)[0]; })
 		.attr("cy", function (d) { if(d.LatLang) return projection(d.LatLang)[1]; })
 		.attr("r", "2px")
@@ -117,7 +126,7 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
           .attr("width", "100px")
           .attr("height", "500px")
           .style("left", (d3.event.pageX + 10) + "px")
-          .style("top", (d3.event.pageY +     30) + "px");
+          .style("top", (d3.event.pageY + 30) + "px");
       }
       
     })
@@ -130,10 +139,30 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
       }
     });
     
-    //Add Zooming and panning
+    circles.exit()
+    .transition().duration(200)
+      .attr("r", "2px")
+      .remove();
+      
+    }//end of circleMarker funtion
     
-    /* Style for Custom Tooltip */
+    
+    var sliderBar = sliderD3();
+  
+    var sliderContainer =  d3.select("#slider")
+        .datum([minYear, maxYear])
+        .call(sliderBar);
+    
+    sliderBar.on("slide", function(year){
 
+          var filterData = atlasData.filter( function(d) {
+              if(d.DateYear >= year[0] && d.DateYear <= year[1])
+                return d;
+            })
+            circleMarker(filterData);
+       });
+  
+    //Add Zooming and panning
     
     /*
     //Add hexagonal bins with hovering over shows tooltip with piechart
@@ -170,6 +199,14 @@ d3.json("./../data/denmark.topo.json", function(error, map) {
     //Heatmap 
     //http://bl.ocks.org/kaijiezhou/82d0b794e845294b366e
     
-  }//end f cordinates csv
+  }//end cordinates csv
   
+  //Using slider module with dispatch function to get the handle value
+  // Using the handle value (Years) changing the filter to create the filtered markers
+
+  
+    //.on("MoveSlider", function(d, i) { 
+      //  d3.select("#message").text(d); 
+    //});
+
 });
