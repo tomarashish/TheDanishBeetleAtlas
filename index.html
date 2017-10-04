@@ -80,20 +80,18 @@
    <div id="wrapper" class="">
     <div class="overlay" style="display: none;"></div>
     <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
-        <ul class="nav sidebar-nav"> 
-            <li class="sidebar-brand">
-                <a> <h2>Control Panel</h2></a>
-            </li>
-            <li>
-                <a href="#"><i class=""></i>Diversity View </a>
-            </li>
-           <li>
-                <a href="#"><i class=""></i>Species View </a>
-            </li>
-          <li>
-                <a href="#"><i class=""></i>Color By</a>
-            </li>
-        </ul>
+         <div class="nav sidebar-nav"> 
+          <div id="mode-buttons"> <span>Dataset</span><br><br>
+ 					<button id="diversity-button" class="button button--winona button--all" data-text="Diversity View"
+					onclick="controls.setMode('diversityMode', true);">
+						<span>Diversity View </span></button>
+ 					
+					<button id="species-button" class="button button--winona button--all" data-text="Species Range Maps" 
+					onclick="controls.setMode('speciesMode', true);">
+						<span>Species Range Maps</span></button>
+					
+			</div>
+      </div>
     </nav>
     <div id="page-content-wrapper">
         <button type="button" class="hamburger animated fadeInLeft is-closed" data-toggle="offcanvas">
@@ -118,6 +116,7 @@
     
     </div>
 </div>
+  </div>
     <!-- /#wrapper -->
    
   <!-- Annotate data with geoCords -->

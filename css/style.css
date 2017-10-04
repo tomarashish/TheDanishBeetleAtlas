@@ -79,7 +79,7 @@ body {
 }
 
 container-fluid {
-  margin-top: 100px;
+  margin-top: 10px !important;
   margin-right: auto;
   margin-left: auto;
 }
@@ -242,17 +242,6 @@ text {
   font-weight: bold;
 }
 
-#sidebar-wrapper {
-  background-color: rgba(0, 0, 16, 0.7);
-  max-height: calc(100% - 60px);
-  width: 100%;
-  position: absolute;
-  top: 150px;
-  right: 0px;
-  max-width: 408px;
-  overflow-y: auto;
-}
-
 .navbar {
   min-height: 80px;
   background:#b0acac;
@@ -413,8 +402,8 @@ li{
 
 .handle {
   fill: #000;
-  stroke: #000;
-  stroke-opacity: 0.3;
+  stroke: purple;
+  stroke-opacity: 0.4;
   stroke-width: 20px;
   cursor: hand;
 }
