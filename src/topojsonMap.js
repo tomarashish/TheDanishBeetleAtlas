@@ -37,7 +37,7 @@ var color = d3.scaleOrdinal(d3.schemeCategory20b);
 
 var colorByFamily = true, colorByTaxon = false, colorNone = false;
 
-d3.json("data/denmark.topo.json", function(error, map) {
+d3.json("./data/denmark.topo.json", function(error, map) {
   
   svgMap.selectAll("path")
     .data(topojson.feature(map, map.objects.denmarktopo).features)
@@ -48,7 +48,7 @@ d3.json("data/denmark.topo.json", function(error, map) {
       .style("stroke-width", "2px");
     
   queue()
-    .defer(d3.csv, 'data/merge_data.csv')
+    .defer(d3.csv, './data/merge_data.csv')
 	.await(createMarker);
   
   //create map from combined data
