@@ -10,29 +10,33 @@
   <script type="text/javascript" src="src/jquery.js"></script>
   <script src="src/bootstrap.min.js"></script>
   <script src="src/bootstrap-left-slide-menu.js"></script>
-  
+
   <script src="src/d3.v4.min.js" charset="utf-8"></script>
   <script src="src/topojson.v1.min.js"></script>
   <script src="src/queue.v1.min.js"></script>
-  
+  <script src="src/d3.v3.min.js"></script>
+  <script src="src/sunburstD3.js"></script>
+  <script src="src/circle_packing.js"></script>
+  <script src="src/hierarchyTree.js"></script>
+
   <script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
-  
+
   <!--Google geomap -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdcbg8vmnoK978ZycmyWPhFNfXxeZRJ1w"></script>
-  
+
   <!-- utm to lat long -->
   <script src="src/proj4.js"></script>
-  
+
   <!-- css script --
-  <!--bootstrap and sidebar css--> 
+  <!--bootstrap and sidebar css-->
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/bootstrap-theme.min.css">
   <link rel="stylesheet" href="css/bootstrap-left-slide-menu.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
-  
+
   <!-- favicon image -->
   <link rel="shortcut icon" type="image/png" href="./data/img/beetle1.png">
-  
+
   <!-- fontawesome and custom css -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -60,6 +64,7 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
             <li class="active"><a href="index.html"><i class="fa fa-globe" aria-hidden="true"></i> &nbsp;MAP</a></li>
+            <li><a href="storytelling.html"><i class="fa fa-info-circle" aria-hidden="true"></i> &nbsp; Taxonomy Tree</a></li>
             <li><a href="about.html"><i class="fa fa-info-circle" aria-hidden="true"></i> &nbsp; ABOUT</a></li>
           </ul>
         </div>
@@ -67,7 +72,7 @@
     </div>
   </nav>
 
- <footer class="footer">
+  <footer class="footer">
     <div class="container">
       <p>Developed By :
         <span><a href="#" target="_blank">Natural History Museum, Denmark</a></span> &nbsp; And &nbsp;
@@ -77,56 +82,56 @@
     </div>
   </footer>
 
-   <div id="wrapper" class="">
+  <div id="wrapper" class="">
     <div class="overlay" style="display: none;"></div>
     <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
-         <div class="nav sidebar-nav"> 
-          <div id="mode-buttons"> <span>Dataset</span><br><br>
- 					<button id="diversity-button" class="button button--winona button--all" data-text="Diversity View"
-					onclick="controls.setMode('diversityMode', true);">
+      <div class="nav sidebar-nav">
+        <div id="mode-buttons"> <span>Dataset</span><br><br>
+          <button id="diversity-button" class="button button--winona button--all" data-text="Diversity View" onclick="controls.setMode('diversityMode', true);">
 						<span>Diversity View </span></button>
- 					
-					<button id="species-button" class="button button--winona button--all" data-text="Species Range Maps" 
-					onclick="controls.setMode('speciesMode', true);">
+
+          <button id="species-button" class="button button--winona button--all" data-text="Species Range Maps" onclick="controls.setMode('speciesMode', true);">
 						<span>Species Range Maps</span></button>
-					
-			</div>
+
+        </div>
       </div>
     </nav>
     <div id="page-content-wrapper">
-        <button type="button" class="hamburger animated fadeInLeft is-closed" data-toggle="offcanvas">
+      <button type="button" class="hamburger animated fadeInLeft is-closed" data-toggle="offcanvas">
             <span class="hamb-top"></span>
             <span class="hamb-middle"></span>
             <span class="hamb-bottom"></span>
         </button>
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-8 col-sm-6">
-              <div id="map"></div>
-              <div id="slider" ></div>
-            </div>
-            <div class="col-md-4 col-sm-6">
-              <div id="view_selection" class="btn-group">
-                <button id="family" style="margin-right: 10px;" class="btn btn-raised active">Family</button>
-                <button id="species" class="btn btn-raised">Species</button>
-              </div>
-              <div id="barChart"></div>
-            </div>  
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-8 col-sm-6">
+            <div id="map"></div>
+            <div id="slider"></div>
           </div>
-    
+          <div class="col-md-4 col-sm-6">
+            <div id="view_selection" class="btn-group">
+              <button id="family" style="margin-right: 10px;" class="btn btn-raised active">Sunburst</button>
+              <button id="species" class="btn btn-raised">Circle</button>
+            </div>
+            <div id="barChart"></div>
+          </div>
+        </div>
+
+      </div>
     </div>
-</div>
   </div>
-    <!-- /#wrapper -->
-   
+  <!-- /#wrapper -->
+
   <!-- Annotate data with geoCords -->
+  <script src="src/d3.v4.min.js" charset="utf-8"></script>
   <script src="src/annnotateData.js"></script>
-  
+
   <script src="src/app.js"></script>
-  <script src="src/groupBarChart.js"></script>
+  <!--script src="src/groupBarChart.js"></script-->
   <script src="src/topojsonMap.js"></script>
   <script src="src/slider.js"></script>
-  
+
+
 </body>
 
 </html>
