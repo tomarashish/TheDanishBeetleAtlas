@@ -3,92 +3,140 @@
 //
 
 
- queue()
-    .defer(d3.csv, './../data/merge_data.csv')
-	.await(getCoordinates);
+queue()
+  .defer(d3.csv, './../data/merge_data.csv')
+  .await(getCoordinates);
 
-function getCoordinates(error, atlasData){
-  
+function getCoordinates(error, atlasData) {
+
   //https://github.com/proj4js/proj4js
-    var utm = "+proj=utm +zone=32";
-    var wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
-    
+  var utm = "+proj=utm +zone=32";
+  var wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
+
   //change UTm to latlang
-   for( var i = 0; i < atlasData.length; i++){
-    
-   if(atlasData[i].XKoord != "NA" || atlasData[i].YKoord != "NA"){
-         var LatLang = [];
-          atlasData[i].LatLang = proj4(utm,wgs84,[atlasData[i].XKoord, atlasData[i].YKoord]);
-      }
+  for (var i = 0; i < atlasData.length; i++) {
+
+    if (atlasData[i].XKoord != "NA" || atlasData[i].YKoord != "NA") {
+      var LatLang = [];
+      atlasData[i].LatLang = proj4(utm, wgs84, [atlasData[i].XKoord, atlasData[i].YKoord]);
+    }
     //end of for loop
-    else{
-      
+    else {
+
       var address = atlasData[i].Lokalitet
-     
+
       // Initialize the Geocoder
       geocoder = new google.maps.Geocoder();
       if (geocoder) {
         geocoder.geocode({
-            'address': address
+          'address': address
         }, function (results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-              // console.log(results[0]);
-            }
+          if (status == google.maps.GeocoderStatus.OK) {
+            // console.log(results[0]);
+          }
         });
       }
     }
-   }
+  }
 
 }
 
-function convertArrayOfObjectsToCSV(args) {  
-        var result, ctr, keys, columnDelimiter, lineDelimiter, data;
+function convertArrayOfObjectsToCSV(args) {
+  var result, ctr, keys, columnDelimiter, lineDelimiter, data;
 
-        data = args.data || null;
-        if (data == null || !data.length) {
-            return null;
-        }
+  data = args.data || null;
+  if (data == null || !data.length) {
+    return null;
+  }
 
-        columnDelimiter = args.columnDelimiter || ',';
-        lineDelimiter = args.lineDelimiter || '\n';
+  columnDelimiter = args.columnDelimiter || ',';
+  lineDelimiter = args.lineDelimiter || '\n';
 
-        keys = Object.keys(data[0]);
+  keys = Object.keys(data[0]);
 
-        result = '';
-        result += keys.join(columnDelimiter);
-        result += lineDelimiter;
+  result = '';
+  result += keys.join(columnDelimiter);
+  result += lineDelimiter;
 
-        data.forEach(function(item) {
-            ctr = 0;
-            keys.forEach(function(key) {
-                if (ctr > 0) result += columnDelimiter;
+  data.forEach(function (item) {
+    ctr = 0;
+    keys.forEach(function (key) {
+      if (ctr > 0) result += columnDelimiter;
 
-                result += item[key];
-                ctr++;
-            });
-            result += lineDelimiter;
-        });
+      result += item[key];
+      ctr++;
+    });
+    result += lineDelimiter;
+  });
 
-        return result;
+  return result;
 }
 
 function downloadCSV(args) {
-        var data, filename, link;
+  var data, filename, link;
 
-        var csv = convertArrayOfObjectsToCSV({
-            data: stockData
-        });
-        if (csv == null) return;
+  var csv = convertArrayOfObjectsToCSV({
+    data: stockData
+  });
+  if (csv == null) return;
 
-        filename = args.filename || 'export.csv';
+  filename = args.filename || 'export.csv';
 
-        if (!csv.match(/^data:text\/csv/i)) {
-            csv = 'data:text/csv;charset=utf-8,' + csv;
-        }
-        data = encodeURI(csv);
+  if (!csv.match(/^data:text\/csv/i)) {
+    csv = 'data:text/csv;charset=utf-8,' + csv;
+  }
+  data = encodeURI(csv);
 
-        link = document.createElement('a');
-        link.setAttribute('href', data);
-        link.setAttribute('download', filename);
-        link.click();
-    }
+  link = document.createElement('a');
+  link.setAttribute('href', data);
+  link.setAttribute('download', filename);
+  link.click();
+}
+
+
+var chartObj = [];
+
+function groupAsTree(data) {
+
+  var treeData = {
+    "key": "Root",
+    "values": d3.nest()
+      /*.key(function (d) {
+        return d.kingdom;
+      })
+      .key(function (d) {
+        return d.phylum;
+      })
+      .key(function (d) {
+        return d.class;
+      })*/
+      .key(function (d) {
+        return d.order;
+      })
+      .key(function (d) {
+        return d.family;
+      })
+      .key(function (d) {
+        return d.genus;
+      })
+      .key(function (d) {
+        return d.species;
+      })
+      .entries(data)
+  };
+  return treeData;
+}
+
+//d3.json("data/taxonomy_tree.json", function (error, taxoData) {
+d3.csv("./../data/coleoptera_taxonomy.csv", function (error, taxoData) {
+  //console.log(JSON.stringify(groupAsTree(taxoData)));
+  console.log(groupAsTree(taxoData));
+
+  var sunview = sunburstD3();
+  //var sunview = circlePack();
+
+  var chartContainer = d3.select("#barChart")
+    .datum(groupAsTree(taxoData))
+    .call(sunview);
+
+});
