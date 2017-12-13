@@ -18,10 +18,10 @@ hierarchyViewer = function module() {
       bottom: 30,
       left: 20
     },
-    width = 700 - margin.left - margin.right,
+    width = 600 - margin.left - margin.right,
     height = 3000 - margin.top - margin.bottom,
     barHeight = 50,
-    barWidth = width * .8;
+    barWidth = width * .5;
 
   var i = 0,
     duration = 100,
@@ -39,12 +39,12 @@ hierarchyViewer = function module() {
   // Misc. variables
   var i = 0;
 
-  // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
-  var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+  // Custom color category 
+  var color = d3.scale.ordinal().range(["#8dd3c7", "#1f78b4", "#e5c494", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#bc80bd", "#ccebc5", "#ffed6f", "#b15928"]);
 
   function exports(_selection) {
     _selection.each(function (_data) {
-      console.log(_data)
+
       svg = d3.select('body').select("#" + this.id)
         .append("svg")
         .attr("id", this.id + "Svg")
@@ -57,13 +57,15 @@ hierarchyViewer = function module() {
       svgGroup = svg.append("g").attr("id", this.id + "SvgGroup");
 
 
-      root = _data
+      root = _data;
       root.x0 = 0;
       root.y0 = 0;
 
       collapseAll(root)
       expand(root)
       update(root);
+      console.log(root)
+      chartObj.push(this);
 
     }) //end of selections
   } //end of exports
@@ -71,7 +73,10 @@ hierarchyViewer = function module() {
   function update(source) {
 
     // Compute the flattened node list. TODO use d3.layout.hierarchy.
-    var nodes = tree.nodes(root);
+    var nodes = tree.nodes(root).filter(function (d) {
+      if (d.children)
+        return d.children;
+    });;
 
     //height = Math.max(500, nodes.length * barHeight + margin.top + margin.bottom );
 
@@ -92,10 +97,10 @@ hierarchyViewer = function module() {
     var node = svgGroup.selectAll("g.node")
       .data(nodes, function (d) {
         return d.id || (d.id = ++i);
-      })
+      });
 
-    nodeEnter = node.enter()
-      .append("g")
+
+    nodeEnter = node.enter().append("g")
       .attr("class", "node")
       .attr("transform", function (d) {
         return "translate(" + source.y0 + "," + source.x0 + ")";
@@ -115,9 +120,11 @@ hierarchyViewer = function module() {
     nodeEnter.append("rect")
       .attr("y", -barHeight / 2)
       .attr("x", 5)
+      .attr("rx", "20px")
+      .attr("ry", "20px")
       .attr("height", barHeight - 1)
       .attr("width", barWidth - 50)
-      .style("fill", color)
+      .style("fill", getColor)
       .on("click", click);
 
     nodeEnter.append("text")
@@ -126,27 +133,21 @@ hierarchyViewer = function module() {
       .style("font-size", "22px")
       //.style("font-weight", "bold")
       .text(function (d) {
-        return d.key;
+        return d.name;
       });
 
     node.select('text')
       .attr('class', 'nodeText')
       .text(function (d) {
         if (d.children) {
-          return '- ' + d.key;
+          return '- ' + d.name;
         } else if (d._children) {
-          return '+ ' + d.key;
+          return '+ ' + d.name;
         } else {
-          return d.key;
+          return d.name;
         }
       });
 
-    // Change the circle fill depending on whether it has children and is collapsed
-    node.select("circle.nodeCircle")
-      .attr("r", 4.5)
-      .style("fill", function (d) {
-        return d._children ? "lightsteelblue" : "#fff";
-      });
 
     // Transition nodes to their new position.
     nodeEnter.transition()
@@ -163,7 +164,7 @@ hierarchyViewer = function module() {
       })
       .style("opacity", 1)
       .select("rect")
-      .style("fill", color);
+      .style("fill", getColor);
 
     // Transition exiting nodes to the parent's new position.
     node.exit().transition()
@@ -173,7 +174,6 @@ hierarchyViewer = function module() {
       })
       .style("opacity", 1e-6)
       .remove();
-
 
     // Update the links…
     var link = svgGroup.selectAll("path.link")
@@ -228,9 +228,6 @@ hierarchyViewer = function module() {
     });
   } //end of update
 
-  function zoom() {
-    svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-  }
 
   function centerNode(source, divId) {
     scale = zoomListener.scale();
@@ -239,35 +236,13 @@ hierarchyViewer = function module() {
     x = x * scale + width / 8;
     y = y * scale + height / 2;
 
-
-    d3.select("#" + divId).select('g').transition()
-      .duration(duration)
-      .attr("transform", "translate(" + x + "," + y + ")scale(" + scale + ")");
-
-    zoomListener.scale(scale);
-    zoomListener.translate([x, y]);
   }
 
   // Toggle children on click.
   function click(d) {
 
-    chartObj.forEach(function (obj) {
-
-      var newPath = getNodePath(obj.__data__, d.id);
-
-      if (newPath.children) {
-
-        newPath._children = newPath.children;
-        newPath.children = null;
-      } else {
-        newPath.children = newPath._children;
-        newPath._children = null;
-      }
-
-      update(obj.__data__);
-      //centerNode(newPath, obj.id);
-
-    });
+    update(d);
+    //centerNode(newPath, obj.id);
 
   } //end of click
 
@@ -295,9 +270,6 @@ hierarchyViewer = function module() {
     }
   } //end of getNodePath
 
-  function color(d) {
-    return d._children ? "#c6dbef" : d.children ? "#c6dbef" : "#fd8d3c";
-  }
 
   function elbow(d, i) {
     return "M" + d.source.y + "," + d.source.x +
@@ -335,55 +307,23 @@ hierarchyViewer = function module() {
     }
   } //end of expand function 
 
-  // Define the zoom function for the zoomable tree
+  // Function to get same color for child based on color of parent. 
+  // Using d3.hsl as color palette
+  function getColor(d) {
 
-  // Function to update the temporary connector indicating dragging affiliation
-  var updateTempConnector = function () {
-    var data = [];
-
-    if (draggingNode != null && selectedNode != null) {
-
-      // have to flip the source coordinates since we did this for the existing connectors on the original tree
-      data = [{
-        source: {
-          x: selectedNode.y0,
-          y: selectedNode.x0
-        },
-        target: {
-          x: draggingNode.y0,
-          y: draggingNode.x0
-        }
-            }];
+    if (d.depth == 0) {
+      return "white";
     }
+    var fadeColor = 1;
 
-    var link = svgGroup.select("#basetreeSvgGroup").selectAll(".templink").data(data);
-
-    link.enter().append("path")
-      .attr("class", "templink")
-      .attr("d", d3.svg.diagonal())
-      .attr('pointer-events', 'none');
-
-    link.attr("d", d3.svg.diagonal());
-
-    link.exit().remove();
-  };
-
-
-  function zoom() {
-    svgGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    while (d.depth > 6) {
+      d = d.parent;
+    }
+    var c = d3.lab(color(d.key))
+    //.brighter();
+    return c;
   }
-
-  // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
-  var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
-
-  function sortTree() {
-    tree.sort(function (a, b) {
-      return b.name.toLowerCase() < a.name.toLowerCase() ? 1 : -1;
-    });
-  }
-  // Sort the tree initially incase the JSON isn't in a sorted order.
-  //sortTree();
-
+  // Define the zoom function for the zoomable tree
 
   //export function to modules
   exports.width = function (_) {
@@ -395,6 +335,12 @@ hierarchyViewer = function module() {
   exports.height = function (_) {
     if (!arguments.length) return height;
     height = _;
+    return exports;
+  }
+
+  exports.enableDrag = function (_) {
+    if (!arguments.length) return enableDrag;
+    enableDrag = _;
     return exports;
   }
 

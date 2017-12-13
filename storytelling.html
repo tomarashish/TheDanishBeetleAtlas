@@ -9,9 +9,8 @@
   <!-- using local jquery, bootstrap and d3.js libs -->
   <script type="text/javascript" src="src/jquery.js"></script>
   <script src="src/bootstrap.min.js"></script>
-  <script src="src/d3.v4.min.js" charset="utf-8"></script>
+  <!--script src="src/d3.v4.min.js" charset="utf-8"></script-->
   <script src="src/d3.v3.min.js"></script>
-  <script src="src/sunburstD3.js"></script>
   <!--script src="src/circle_packing.js"></script-->
   <script src="src/hierarchyTree.js"></script>
 
@@ -54,7 +53,7 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="index.html"><i class="fa fa-globe" aria-hidden="true"></i> &nbsp;MAP</a></li>
-            <li class="active"><a href="storytelling.html"><i class="fa fa-info-circle" aria-hidden="true"></i> &nbsp; STORY</a></li>
+            <li class="active"><a href="storytelling.html"><i class="fa fa-info-circle" aria-hidden="true"></i> &nbsp; Taxonomy Tree</a></li>
             <li><a href="about.html"><i class="fa fa-info-circle" aria-hidden="true"></i> &nbsp; ABOUT</a></li>
           </ul>
         </div>
@@ -79,13 +78,22 @@
     <div class="row">
       <div class="col-md-12">
 
-        <div class="col-md-6 col-sm-6 col-xs-6 chart-wrapper">
+        <div class="col-md-4 col-sm-6 col-xs-6 chart-wrapper" style="margin-top:100px">
           <div class="chart-title">
             Taxonomy Tree
             <div id="searchName" class="col-md-2"></div>
           </div>
           <div id="reftree" class="chart-area"></div>
         </div>
+
+        <div class="col-md-8 col-sm-6 col-xs-6 chart-wrapper" style="margin-top:100px">
+          <div class="chart-title">
+            Image Viewer
+            <div id="searchName" class="col-md-2"></div>
+          </div>
+          <div id="imagetree" class="chart-area"></div>
+        </div>
+
       </div>
     </div>
   </div>

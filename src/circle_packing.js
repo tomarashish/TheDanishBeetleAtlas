@@ -1,10 +1,10 @@
 circlePack = function module() {
 
 
-  var svg, margin = 20,
+  var svg, margin = 10,
     root, node, circle,
     focus, nodes, view,
-    diameter = 700;
+    diameter = 50;
 
   var color = d3.scaleLinear()
     .domain([-1, 5])
@@ -12,15 +12,18 @@ circlePack = function module() {
     .interpolate(d3.interpolateHcl);
 
   var pack = d3.pack()
-    .size([diameter - margin, diameter - margin])
+    .size([200, 200])
     .padding(10);
 
   function exports(_selection) {
     _selection.each(function (_data) {
 
       root = d3.hierarchy(_data, function (d) {
-        return d.values;
-      });
+          return d.values;
+        })
+        .sum(function (d) {
+          return 1;
+        });
 
       focus = root;
       nodes = pack(root).descendants();
@@ -52,8 +55,10 @@ circlePack = function module() {
         return d.children ? color(d.depth) : null;
       })
       .on("click", function (d) {
-        if (focus !== d) zoom(d), d3.event.stopPropagation();
+        console.log(d)
+        if (focus !== d) zoom(d); // d3.event.stopPropagation();
       });
+
 
 
     var text = svg.selectAll("text")
@@ -75,7 +80,7 @@ circlePack = function module() {
       .on("click", function () {
         zoom(root);
       });
-    console.log(root_data)
+
     zoomTo([root.x, root.y, root.r * 2 + margin]);
 
     function zoomTo(v) {
@@ -90,7 +95,6 @@ circlePack = function module() {
     } //end of zoomTo
 
   } //end of update
-
   function zoom(d) {
     var focus0 = focus;
     focus = d;
@@ -117,6 +121,17 @@ circlePack = function module() {
       .on("end", function (d) {
         if (d.parent !== focus) this.style.display = "none";
       });
+  }
+
+  function zoomTo(v) {
+    var k = diameter / v[2];
+    view = v;
+    node.attr("transform", function (d) {
+      return "translate(" + (d.x - v[0]) * k + "," + (d.y - v[1]) * k + ")";
+    });
+    circle.attr("r", function (d) {
+      return d.r * k;
+    });
   }
 
 
