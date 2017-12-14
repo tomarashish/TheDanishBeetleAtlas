@@ -6,20 +6,23 @@
 hierarchyViewer = function module() {
 
   var tree = d3.layout.tree()
-    .size([0, 50])
+    .size([0, 250])
     .children(function (d) {
       return d.values; //change araay values to children attribute
-    });
+    })
+  // .value(function (d) {
+  // return d.key;
+  // });
   //.sort(d3.ascending);
 
   var margin = {
-      top: 30,
+      top: 50,
       right: 20,
       bottom: 30,
       left: 20
     },
     width = 600 - margin.left - margin.right,
-    height = 3000 - margin.top - margin.bottom,
+    height = 50000 - margin.top - margin.bottom,
     barHeight = 50,
     barWidth = width * .5;
 
@@ -61,10 +64,10 @@ hierarchyViewer = function module() {
       root.x0 = 0;
       root.y0 = 0;
 
-      collapseAll(root)
-      expand(root)
+      //collapse(root)
+      //expand(root)
       update(root);
-      console.log(root)
+
       chartObj.push(this);
 
     }) //end of selections
@@ -73,24 +76,25 @@ hierarchyViewer = function module() {
   function update(source) {
 
     // Compute the flattened node list. TODO use d3.layout.hierarchy.
-    var nodes = tree.nodes(root).filter(function (d) {
-      if (d.children)
-        return d.children;
-    });;
+    nodes = tree.nodes(root)
+      .filter(function (d) {
+        if (d.children)
+          return d;
+      });
 
+    links = tree.links(nodes);
+
+    delete root.values;
+    // Collapse after the second level
+    collapseAll(root)
+    expand(root)
     //height = Math.max(500, nodes.length * barHeight + margin.top + margin.bottom );
-
-    d3.select("svg").transition()
-      .duration(duration)
-      .attr("height", height);
-
-    d3.select(self.frameElement).transition()
-      .duration(duration)
-      .style("height", height + "px");
+    console.log(root)
 
     // Compute the "layout".
     nodes.forEach(function (n, i) {
       n.x = i * barHeight;
+      //n.y = n.depth + 50;
     });
 
     // Update the nodes…
@@ -107,14 +111,14 @@ hierarchyViewer = function module() {
       })
       .style("opacity", 1);
 
-    //append circle
-    nodeEnter.append("circle")
-      .attr('class', 'nodeCircle')
-      .attr("r", 0)
-      .style("fill", function (d) {
-        return d._children ? "lightsteelblue" : "#fff";
-      });
-
+    /*/append circle
+        nodeEnter.append("circle")
+          .attr('class', 'nodeCircle')
+          .attr("r", 0)
+          .style("fill", function (d) {
+            return d._children ? "lightsteelblue" : "#fff";
+          });
+    */
 
     // Enter any new nodes at the parent's previous position.
     nodeEnter.append("rect")
@@ -123,7 +127,7 @@ hierarchyViewer = function module() {
       .attr("rx", "20px")
       .attr("ry", "20px")
       .attr("height", barHeight - 1)
-      .attr("width", barWidth - 50)
+      .attr("width", barWidth - 30)
       .style("fill", getColor)
       .on("click", click);
 
@@ -133,18 +137,19 @@ hierarchyViewer = function module() {
       .style("font-size", "22px")
       //.style("font-weight", "bold")
       .text(function (d) {
-        return d.name;
+        return d.key;
       });
 
     node.select('text')
       .attr('class', 'nodeText')
       .text(function (d) {
+        // console.log(d)
         if (d.children) {
-          return '- ' + d.name;
+          return '- ' + d.key;
         } else if (d._children) {
-          return '+ ' + d.name;
+          return '+ ' + d.key;
         } else {
-          return d.name;
+          return d.key;
         }
       });
 
@@ -177,7 +182,7 @@ hierarchyViewer = function module() {
 
     // Update the links…
     var link = svgGroup.selectAll("path.link")
-      .data(tree.links(nodes), function (d) {
+      .data(links, function (d) {
         return d.target.id;
       });
 
@@ -237,9 +242,25 @@ hierarchyViewer = function module() {
     y = y * scale + height / 2;
 
   }
+  // Collapse the node and all it's children
+  function collapse(d) {
+    if (d.children) {
+      d._children = d.children
+      d._children.forEach(collapse)
+      d.children = null
+    }
+  }
 
   // Toggle children on click.
   function click(d) {
+
+    if (d.children) {
+      d._children = d.children;
+      d.children = null;
+    } else {
+      d.children = d._children;
+      d._children = null;
+    }
 
     update(d);
     //centerNode(newPath, obj.id);
@@ -282,6 +303,7 @@ hierarchyViewer = function module() {
       d.children = null;
     }
     if (d.children) {
+
       d._children = d.children;
       d._children.forEach(collapseAll);
       d.children = null;
@@ -311,9 +333,6 @@ hierarchyViewer = function module() {
   // Using d3.hsl as color palette
   function getColor(d) {
 
-    if (d.depth == 0) {
-      return "white";
-    }
     var fadeColor = 1;
 
     while (d.depth > 6) {

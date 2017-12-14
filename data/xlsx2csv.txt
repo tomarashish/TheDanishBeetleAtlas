@@ -1,0 +1,2 @@
+sudo apt-get install gnumeric
+$ ssconvert Book1.xlsx newfile.csv
