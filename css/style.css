@@ -419,13 +419,6 @@ li {
   font-size: 20px;
 }
 
-#view_selection {
-  top: 50px;
-  left: 200px;
-  font-size: 25px;
-  margin-bottom: 100px;
-}
-
 #view_selection .btn {
   font-size: 20px;
   color: #000;

@@ -1,33 +1,33 @@
-var mapWidth = 1200,
-     mapHeight = 800;
+var mapWidth = 970,
+  mapHeight = 750;
 
-      var projection = d3.geoMercator()
-	    .translate([-1200, 9350])
-        .scale(7500);
-      
+var projection = d3.geoMercator()
+  .translate([-1050, 9350])
+  .scale(7500);
+
 var showToolTip = true;
 
 var path = d3.geoPath()
-      .projection(projection);
+  .projection(projection);
 
 var minYear,
-    maxYear;
+  maxYear;
 
 var svgMap = d3.select("#map").append("svg")
-    .attr("width", "100%")
-    .attr("height", mapHeight)
-    .attr("viewBox", "0 0 900 800")
-	.attr("preserveAspectRatio", "xMidYMid");
+  .attr("width", "100%")
+  .attr("height", mapHeight)
+  .attr("viewBox", "0 0 970 800")
+  .attr("preserveAspectRatio", "xMidYMid");
 
 var hexbin = d3.hexbin()
-    .extent([[0, 0], [mapWidth, mapHeight]])
-    .radius(4);
+  .extent([[0, 0], [mapWidth, mapHeight]])
+  .radius(4);
 
 var radius = d3.scaleSqrt()
-    .domain([0, 15])
-    .range([0, 8]);
+  .domain([0, 15])
+  .range([0, 8]);
 
-var div = d3.select("body") 
+var div = d3.select("body")
   .append("div")
   .attr("class", "tooltip")
   .style("opacity", 0)
@@ -35,135 +35,145 @@ var div = d3.select("body")
 //https://bl.ocks.org/pstuffa/3393ff2711a53975040077b7453781a9
 var color = d3.scaleOrdinal(d3.schemeCategory20b);
 
-var colorByFamily = true, colorByTaxon = false, colorNone = false;
+var colorByFamily = true,
+  colorByTaxon = false,
+  colorNone = false;
 
-d3.json("./data/denmark.topo.json", function(error, map) {
-  
+d3.json("./data/denmark.topo.json", function (error, map) {
+
   svgMap.selectAll("path")
     .data(topojson.feature(map, map.objects.denmarktopo).features)
     .enter().append("path")
-      .attr("d", path)
-      .style("fill", "#f5eede")
-      //.style("stroke", "#648d9e")
-      .style("stroke-width", "2px");
-    
+    .attr("d", path)
+    .style("fill", "#f5eede")
+    //.style("stroke", "#648d9e")
+    .style("stroke-width", "2px");
+
   queue()
     .defer(d3.csv, './data/merge_data.csv')
-	.await(createMarker);
-  
+    .await(createMarker);
+
   //create map from combined data
-  function createMarker(error, atlasData ){
-  
-    maxYear = d3.max(atlasData, function(d){ return +d.DateYear; });
-    minYear = d3.min(atlasData, function(d) { return +d.DateYear; });
-    
+  function createMarker(error, atlasData) {
+
+    maxYear = d3.max(atlasData, function (d) {
+      return +d.DateYear;
+    });
+    minYear = d3.min(atlasData, function (d) {
+      return +d.DateYear;
+    });
+
     console.log(maxYear)
     //https://github.com/proj4js/proj4js
     var utm = "+proj=utm +zone=32";
     var wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
     var cords = [];
-      for( var i = 0; i < atlasData.length; i++){
+    for (var i = 0; i < atlasData.length; i++) {
       //for( var i = 0; i < 500; i++){
-      
+
       //console.log(proj4(utm,wgs84,[6246846,492837]));
       //console.log(atlasData[i].XKoord, atlasData[i].YKoord);
-        
-      if(atlasData[i].XKoord != "NA" || atlasData[i].YKoord != "NA"){
-         var LatLang = [];
-        
-        cords.push(proj4(utm,wgs84,[atlasData[i].XKoord, atlasData[i].YKoord]))
-          
-          atlasData[i].LatLang = proj4(utm,wgs84,[atlasData[i].XKoord, atlasData[i].YKoord]);
+
+      if (atlasData[i].XKoord != "NA" || atlasData[i].YKoord != "NA") {
+        var LatLang = [];
+
+        cords.push(proj4(utm, wgs84, [atlasData[i].XKoord, atlasData[i].YKoord]))
+
+        atlasData[i].LatLang = proj4(utm, wgs84, [atlasData[i].XKoord, atlasData[i].YKoord]);
       }
-    }//end of for loop
-  
+    } //end of for loop
+
     circleMarker(atlasData)
     //Add markers to map based on coordinates
-  // add circles to svg
-    function circleMarker(markerData){
-      
-       console.log(markerData)
-       
+    // add circles to svg
+    function circleMarker(markerData) {
+
+      console.log(markerData)
+
       var circles = svgMap.selectAll(".circle")
-		.data(markerData)
-      
+        .data(markerData)
+
       circles.enter()
-		.append("circle")
+        .append("circle")
         .attr("class", "circle")
         //.filter(function(d) {return d.DateYear < 1900 })
-		.attr("cx", function (d) { if(d.LatLang)return projection(d.LatLang)[0]; })
-		.attr("cy", function (d) { if(d.LatLang) return projection(d.LatLang)[1]; })
-		.attr("r", "2px")
-        //.style("fill","#648d9e");
-        .style("fill", function(d,i){
-          
-            //if(colorByTaxon == false)
-             // return color(d.Taxon);
-            //console.log(d)
-            return color(i);
-            //if(colorByFamily == true)
-              //return color(d.Family);
-            
-            //if(colorNone == false)
-              //return "#00485d";
+        .attr("cx", function (d) {
+          if (d.LatLang) return projection(d.LatLang)[0];
         })
-   // Modification of custom tooltip code provided by Malcolm Maclean, "D3 Tips and Tricks"
-	// http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
-    .on("mouseover", function(d){
-      
-      if(showToolTip == true){
-        div.transition()
-          .duration(500)
-          .style("opacity", 0.9)
-          .style("text-align", "center")
-          .style("background", "#fff8dc")
-          .style("border", "2px solid")
-          .style("border-color", "black")
-	       .style("border-radius", "3px")
-	       .style("pointer-events", "none");    
-        
-        div.text("coordinates are : " + d)
-          .attr("width", "100px")
-          .attr("height", "500px")
-          .style("left", (d3.event.pageX + 10) + "px")
-          .style("top", (d3.event.pageY + 30) + "px");
-      }
-      
-    })
-    .on("mouseout", function(d){
-      
-      if(showToolTip == true){
-        div.transition()
-          .duration(100)
-          .style("opacity", 0);
-      }
-    });
-    
-    circles.exit()
-    .transition().duration(200)
-      .attr("r", "2px")
-      .remove();
-      
-    }//end of circleMarker funtion
-    
-    
-    var sliderBar = sliderD3();
-  
-    var sliderContainer =  d3.select("#slider")
-        .datum([minYear, maxYear])
-        .call(sliderBar);
-    
-    sliderBar.on("slide", function(year){
+        .attr("cy", function (d) {
+          if (d.LatLang) return projection(d.LatLang)[1];
+        })
+        .attr("r", "2px")
+        //.style("fill","#648d9e");
+        .style("fill", function (d, i) {
 
-          var filterData = atlasData.filter( function(d) {
-              if(d.DateYear >= year[0] && d.DateYear <= year[1])
-                return d;
-            })
-            circleMarker(filterData);
-       });
-  
+          //if(colorByTaxon == false)
+          // return color(d.Taxon);
+          //console.log(d)
+          return color(i);
+          //if(colorByFamily == true)
+          //return color(d.Family);
+
+          //if(colorNone == false)
+          //return "#00485d";
+        })
+        // Modification of custom tooltip code provided by Malcolm Maclean, "D3 Tips and Tricks"
+        // http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
+        .on("mouseover", function (d) {
+
+          if (showToolTip == true) {
+            div.transition()
+              .duration(500)
+              .style("opacity", 0.9)
+              .style("text-align", "center")
+              .style("background", "#fff8dc")
+              .style("border", "2px solid")
+              .style("border-color", "black")
+              .style("border-radius", "3px")
+              .style("pointer-events", "none");
+
+            div.text("coordinates are : " + d)
+              .attr("width", "100px")
+              .attr("height", "500px")
+              .style("left", (d3.event.pageX + 10) + "px")
+              .style("top", (d3.event.pageY + 30) + "px");
+          }
+
+        })
+        .on("mouseout", function (d) {
+
+          if (showToolTip == true) {
+            div.transition()
+              .duration(100)
+              .style("opacity", 0);
+          }
+        });
+
+      circles.exit()
+        .transition().duration(200)
+        .attr("r", "2px")
+        .remove();
+
+    } //end of circleMarker funtion
+
+
+    var sliderBar = sliderD3();
+
+    var sliderContainer = d3.select("#slider")
+      .datum([minYear, maxYear])
+      .call(sliderBar);
+
+    sliderBar.on("slide", function (year) {
+
+      var filterData = atlasData.filter(function (d) {
+        if (d.DateYear >= year[0] && d.DateYear <= year[1])
+          return d;
+      })
+      circleMarker(filterData);
+    });
+
     //Add Zooming and panning
-    
+
     /*
     //Add hexagonal bins with hovering over shows tooltip with piechart
     
@@ -198,15 +208,15 @@ d3.json("./data/denmark.topo.json", function(error, map) {
     */
     //Heatmap 
     //http://bl.ocks.org/kaijiezhou/82d0b794e845294b366e
-    
-  }//end cordinates csv
-  
+
+  } //end cordinates csv
+
   //Using slider module with dispatch function to get the handle value
   // Using the handle value (Years) changing the filter to create the filtered markers
 
-  
-    //.on("MoveSlider", function(d, i) { 
-      //  d3.select("#message").text(d); 
-    //});
+
+  //.on("MoveSlider", function(d, i) { 
+  //  d3.select("#message").text(d); 
+  //});
 
 });
