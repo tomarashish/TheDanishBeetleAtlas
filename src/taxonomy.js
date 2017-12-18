@@ -5,37 +5,37 @@ var chartObj = [];
 // with serach option https: //www.visualcinnamon.com/babynamesus
 function groupAsTree(data) {
 
+  //
   var treeData = {
     "key": "Root",
     "values": d3.nest()
       .key(function (d) {
-        return d.kingdom;
+        return d.Orden;
       })
       .key(function (d) {
-        return d.phylum;
+        return d.Overfamilie;
       })
       .key(function (d) {
-        return d.class;
+        return d.Familie;
       })
       .key(function (d) {
-        return d.order;
+        return d.Underfamilie;
       })
       .key(function (d) {
-        return d.family;
+        return d.Tribus;
       })
       .key(function (d) {
-        return d.genus;
+        return d.Slægt;
       })
       .key(function (d) {
-        return d.species;
+        return d.Art;
       })
       .entries(data)
   };
   return treeData;
 }
 
-//d3.json("data/taxonomy_tree.json", function (error, taxoData) {
-d3.csv("./../data/coleoptera_taxonomy.csv", function (error, taxoData) {
+d3.csv("./../data/BilleDatabase.csv", function (error, taxoData) {
   //console.log(JSON.stringify(groupAsTree(taxoData)));
   console.log(groupAsTree(taxoData));
 

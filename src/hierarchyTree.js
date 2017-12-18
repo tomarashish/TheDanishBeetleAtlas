@@ -64,8 +64,6 @@ hierarchyViewer = function module() {
       root.x0 = 0;
       root.y0 = 0;
 
-      //collapse(root)
-      //expand(root)
       update(root);
 
       chartObj.push(this);
@@ -75,21 +73,14 @@ hierarchyViewer = function module() {
 
   function update(source) {
 
+    console.log(source)
     // Compute the flattened node list. TODO use d3.layout.hierarchy.
     nodes = tree.nodes(root)
       .filter(function (d) {
         if (d.children)
           return d;
       });
-
     links = tree.links(nodes);
-
-    delete root.values;
-    // Collapse after the second level
-    collapseAll(root)
-    expand(root)
-    //height = Math.max(500, nodes.length * barHeight + margin.top + margin.bottom );
-    console.log(root)
 
     // Compute the "layout".
     nodes.forEach(function (n, i) {
@@ -231,6 +222,8 @@ hierarchyViewer = function module() {
       d.x0 = d.x;
       d.y0 = d.y;
     });
+
+    collapseAll(root)
   } //end of update
 
 
@@ -316,7 +309,8 @@ hierarchyViewer = function module() {
     if (typeof local_i === "undefined") {
       local_i = 3;
     }
-    if (local_i > 0) {
+    if (local_i > 3) {
+      console.log(d)
       if (d._children) {
         d.children = d._children;
         d._children = null;
