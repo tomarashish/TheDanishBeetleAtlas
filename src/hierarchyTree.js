@@ -5,7 +5,7 @@
 
 hierarchyViewer = function module() {
 
-  var tree = d3.layout.tree()
+  /* var tree = d3.layout.tree()
     .size([0, 250])
     .children(function (d) {
       return d.values; //change araay values to children attribute
@@ -14,7 +14,7 @@ hierarchyViewer = function module() {
   // return d.key;
   // });
   //.sort(d3.ascending);
-
+*/
   var margin = {
       top: 50,
       right: 20,
@@ -43,7 +43,7 @@ hierarchyViewer = function module() {
   var i = 0;
 
   // Custom color category 
-  var color = d3.scale.ordinal().range(["#8dd3c7", "#1f78b4", "#e5c494", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#bc80bd", "#ccebc5", "#ffed6f", "#b15928"]);
+  var color = d3.scaleOrdinal().range(["#8dd3c7", "#1f78b4", "#e5c494", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#bc80bd", "#ccebc5", "#ffed6f", "#b15928"]);
 
   function exports(_selection) {
     _selection.each(function (_data) {
@@ -60,12 +60,21 @@ hierarchyViewer = function module() {
       svgGroup = svg.append("g").attr("id", this.id + "SvgGroup");
 
 
-      root = _data;
+      //root = _data;
+      root = d3.hierarchy(_data, function (d) {
+          return d.values;
+        })
+        .sum(function (d) {
+          return 1;
+        });
+
       root.x0 = 0;
       root.y0 = 0;
 
-      update(root);
+      collapseAll(root)
+      expand(root);
 
+      update(root);
       chartObj.push(this);
 
     }) //end of selections
@@ -73,19 +82,27 @@ hierarchyViewer = function module() {
 
   function update(source) {
 
-    console.log(source)
-    // Compute the flattened node list. TODO use d3.layout.hierarchy.
-    nodes = tree.nodes(root)
-      .filter(function (d) {
-        if (d.children)
-          return d;
-      });
-    links = tree.links(nodes);
+    nodes = root.descendants();
 
-    // Compute the "layout".
-    nodes.forEach(function (n, i) {
-      n.x = i * barHeight;
-      //n.y = n.depth + 50;
+    //nodes.filter(function (d) {
+
+    //})
+
+    var height = Math.max(500, nodes.length * barHeight + margin.top + margin.bottom);
+
+    d3.select("svg").transition()
+      .duration(duration)
+      .attr("height", height);
+
+    d3.select(self.frameElement).transition()
+      .duration(duration)
+      .style("height", height + "px");
+
+    // Compute the "layout". TODO https://github.com/d3/d3-hierarchy/issues/67
+    var index = -1;
+    root.eachBefore(function (n) {
+      n.x = ++index * barHeight;
+      n.y = n.depth * 40;
     });
 
     // Update the nodes…
@@ -128,19 +145,18 @@ hierarchyViewer = function module() {
       .style("font-size", "22px")
       //.style("font-weight", "bold")
       .text(function (d) {
-        return d.key;
+        return d.data.key;
       });
 
-    node.select('text')
+    nodeEnter.select('text')
       .attr('class', 'nodeText')
       .text(function (d) {
-        // console.log(d)
         if (d.children) {
-          return '- ' + d.key;
+          return '- ' + d.data.key;
         } else if (d._children) {
-          return '+ ' + d.key;
+          return '+ ' + d.data.key;
         } else {
-          return d.key;
+          return d.data.key;
         }
       });
 
@@ -173,13 +189,15 @@ hierarchyViewer = function module() {
 
     // Update the links…
     var link = svgGroup.selectAll("path.link")
-      .data(links, function (d) {
+      .data(root.links(), function (d) {
         return d.target.id;
       });
 
     // Enter any new links at the parent's previous position.
     link.enter().insert("path", "g")
       .attr("class", "link")
+      .style("fill", "none")
+      .style("stroke", "grey")
       .attr("d", function (d) {
         var o = {
           x: source.x0,
@@ -223,7 +241,6 @@ hierarchyViewer = function module() {
       d.y0 = d.y;
     });
 
-    collapseAll(root)
   } //end of update
 
 
@@ -254,7 +271,8 @@ hierarchyViewer = function module() {
       d.children = d._children;
       d._children = null;
     }
-
+    //collapseAll(root)
+    //expand(d)
     update(d);
     //centerNode(newPath, obj.id);
 
@@ -307,10 +325,9 @@ hierarchyViewer = function module() {
   function expand(d, i) {
     var local_i = i;
     if (typeof local_i === "undefined") {
-      local_i = 3;
+      local_i = 2;
     }
-    if (local_i > 3) {
-      console.log(d)
+    if (local_i > 0) {
       if (d._children) {
         d.children = d._children;
         d._children = null;
@@ -332,7 +349,7 @@ hierarchyViewer = function module() {
     while (d.depth > 6) {
       d = d.parent;
     }
-    var c = d3.lab(color(d.key))
+    var c = d3.lab(color(d.data.key))
     //.brighter();
     return c;
   }

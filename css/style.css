@@ -442,8 +442,10 @@ li {
 #reftree {
   height: 750px;
   overflow-y: auto;
+  overflow-x: auto;
 }
 
 #imagetree {
   height: 750px;
+  overflow-y: auto;
 }
