@@ -1,5 +1,5 @@
 var mapWidth = 970,
-  mapHeight = 750;
+  mapHeight = 700;
 
 var projection = d3.geoMercator()
   .translate([-1050, 9350])
@@ -13,11 +13,16 @@ var path = d3.geoPath()
 var minYear,
   maxYear;
 
+var zoom = d3.zoom()
+  .scaleExtent([1, 8])
+  .on("zoom", zoomed);
+
 var svgMap = d3.select("#map").append("svg")
   .attr("width", "100%")
   .attr("height", mapHeight)
   .attr("viewBox", "0 0 970 800")
-  .attr("preserveAspectRatio", "xMidYMid");
+  .attr("preserveAspectRatio", "xMidYMid")
+  .call(zoom);
 
 var hexbin = d3.hexbin()
   .extent([[0, 0], [mapWidth, mapHeight]])
@@ -220,3 +225,15 @@ d3.json("./data/denmark.topo.json", function (error, map) {
   //});
 
 });
+
+function zoomed() {
+  svgMap.style("stroke-width", 1.5 / d3.event.transform.k + "px");
+  // g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")"); // not in d3 v4
+  svgMap.attr("transform", d3.event.transform); // updated for d3 v4
+}
+
+// If the drag behavior prevents the default click,
+// also stop propagation so we don’t click-to-zoom.
+function stopped() {
+  if (d3.event.defaultPrevented) d3.event.stopPropagation();
+}
