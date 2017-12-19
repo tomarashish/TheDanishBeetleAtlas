@@ -6,67 +6,56 @@ sunburstD3 = function module() {
   }
 
   //Initializing variables
-  var svg, div, path, node, trail, trail_width, pngSvg;
+  var svg, div, path, node, trail, trail_width, pngSvg, root;
 
-  var hue = d3.scale.category10();
+  var hue = d3.schemeCategory20;
 
-  var luminance = d3.scale.sqrt()
+  var luminance = d3.scaleSqrt()
     .domain([0, 1e6])
     .clamp(true)
     .range([90, 20]);
 
   // Layout variables using current size of chart
-  var $chart_container = $(this),
-    width = $chart_container.width(),
-    height = $chart_container.width(),
-    radius = 800;
-
-  //Setting breadcrumbs point for drawing svg polygon 
-  var b = {
-    w: 0,
-    h: 40,
-    s: 3,
-    t: 5
-  };
+  // var $chart_container = $(this),
+  // width = $chart_container.width(),
+  //height = $chart_container.width(),
+  var width = 500,
+    height = 415,
+    radius = Math.min(width, height) / 2;
 
   // setting d3 partition layout 
-  var partition = d3.layout.partition()
-    .value(function (d) {
-      return 1;
-    })
-    .children(function (d, i) {
-      return d.values; //change araay values to children attribute
-    });
+  var partition = d3.partition();
 
   // x axis linear scale, change to sqrt to change arc angle
-  var x = d3.scale.linear()
+  var x = d3.scaleLinear()
     .range([0, 2 * Math.PI]);
 
   // y axis sqrt scale, change to linear scale to 
   // make inner angele of arc smaller
-  var y = d3.scale.linear()
+  var y = d3.scaleLinear()
     .range([0, radius]);
 
   // Setting deafault d3 color category 
-  //var color = d3.scale.category20();
+  //var color = d3.schemeCategory20;
 
   // Custom color category 
-  var color = d3.scale.ordinal().range(["#8dd3c7", "#1f78b4", "#e5c494", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#bc80bd", "#ccebc5", "#ffed6f", "#b15928"]);
+  var color = d3.scaleOrdinal().range(["#8dd3c7", "#1f78b4", "#e5c494", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#bc80bd", "#ccebc5", "#ffed6f", "#b15928"]);
 
 
-  var arc = d3.svg.arc()
+  var arc = d3.arc()
     .startAngle(function (d) {
-      return Math.max(0, Math.min(2 * Math.PI, x(d.x)));
+      return Math.max(0, Math.min(2 * Math.PI, x(d.x0)));
     })
     .endAngle(function (d) {
-      return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx)));
+      return Math.max(0, Math.min(2 * Math.PI, x(d.x1)));
     })
     .innerRadius(function (d) {
-      return Math.max(0, y(d.y));
+      return Math.max(0, y(d.y0));
     })
     .outerRadius(function (d) {
-      return Math.max(0, y(d.y + d.dy));
-    })
+      return Math.max(0, y(d.y1));
+    });
+
   //.cornerRadius(function (d) {
   //return 10
   //}); //http://bl.ocks.org/mbostock/b7671cb38efdfa5da3af
@@ -75,9 +64,12 @@ sunburstD3 = function module() {
   function exports(_selection) {
     _selection.each(function (_data) {
 
-      // Keep track of the node that is currently being displayed as the root.
-      // variable needed to reset all charts. 
-      node = _data;
+      root = d3.hierarchy(_data, function (d) {
+          return d.values;
+        })
+        .sum(function (d) {
+          return 1;
+        });
 
       // Filtering the data which have less angle tha .005 radian
       /* var nodes = partition.nodes(_data)
@@ -90,7 +82,7 @@ sunburstD3 = function module() {
 
       // initalizing breadcrumbtrail to represent the hierarchy 
       // of nodes from parent till current selection. 
-      _initializeBreadcrumbTrail();
+      //  _initializeBreadcrumbTrail();
 
       //d3 tooltip
       div = d3.select('body') //select tooltip div over body
@@ -102,21 +94,16 @@ sunburstD3 = function module() {
       svg = d3.select(this).append("svg")
         .attr("width", "100%")
         .attr("height", "100%")
-        .attr('viewBox', '0 0 ' + Math.min(width, height) + ' ' + Math.min(width, height))
+        .attr('viewBox', '0 0 ' + Math.min(width, height + 100) + ' ' + Math.min(width, height))
         .attr('preserveAspectRatio', 'xMinYMin')
         .append("g")
-        .attr("transform", "translate(" + (width / 2) + "," + (height) / 2 + ")");
+        .attr("transform", "translate(" + (width / 2) + "," + (height / 2 + 10) + ")");
 
       console.log(_data)
       //Creating a svg path with passed root node 
-      this.path = svg.datum(_data).selectAll("path.arc")
-        .data(partition.nodes)
+      this.path = svg.selectAll("path.arc")
+        .data(partition(root).descendants())
         .enter()
-        .filter(function (d) {
-          //console.log(d)
-          if (d.children)
-            return d;
-        })
         .append("path")
         .attr("d", arc)
         .attr("class", "arc")
@@ -131,10 +118,8 @@ sunburstD3 = function module() {
       // Creating an array of chart object
       chartObj.push(this);
 
-      /* svg.selectAll(".innerlabel")
-        .data(node.filter(function (d) {
-          if (d.key.length < d.dx / 4) return d;
-        }))
+      svg.selectAll(".innerlabel")
+        .data(root)
         .enter().append("text")
         .attr("class", "innerlabel")
         .attr("dy", ".35em")
@@ -144,10 +129,11 @@ sunburstD3 = function module() {
         .style("font-size", "10px")
         .style("font-weight", "bold")
         .text(function (d) {
+          console.log(d)
           if (d.key != "Root") return d.key;
         });
 
-*/
+
       // creating click buttton on main chart
       if (this.id == "chart") {
         //selction of chart div and binding click to exportAsImage 
@@ -163,12 +149,23 @@ sunburstD3 = function module() {
   // Click function to zoom in or zoom out based on 
   // situation of current node
   function _clickArc(d) {
-    svg.selectAll("path")
-      .transition()
-      .duration(800)
-      .attrTween("d", arcTween(d))
-
-
+    svg.transition()
+      .duration(750)
+      .tween("scale", function () {
+        var xd = d3.interpolate(x.domain(), [d.x0, d.x1]),
+          yd = d3.interpolate(y.domain(), [d.y0, 1]),
+          yr = d3.interpolate(y.range(), [d.y0 ? 20 : 0, radius]);
+        return function (t) {
+          x.domain(xd(t));
+          y.domain(yd(t)).range(yr(t));
+        };
+      })
+      .selectAll("path")
+      .attrTween("d", function (d) {
+        return function () {
+          return arc(d);
+        };
+      });
     //Getting array of name for breadcrumbs trail
     // var seqArray = getAncestor(d);
     //current_breadcrumbs = seqArray;
@@ -213,7 +210,7 @@ sunburstD3 = function module() {
     d3.selectAll("path.arc")
       .transition()
       .duration(1000)
-      .attrTween("d", arcTween(node));
+      .attrTween("d", arcTween(root));
   }
 
   function _mouseover(d) {

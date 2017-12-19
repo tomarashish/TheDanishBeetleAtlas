@@ -14,10 +14,8 @@
   <script src="src/d3.v4.min.js" charset="utf-8"></script>
   <script src="src/topojson.v1.min.js"></script>
   <script src="src/queue.v1.min.js"></script>
-  <script src="src/d3.v3.min.js"></script>
+  <!--script src="src/d3.v3.min.js"></script-->
   <script src="src/sunburstD3.js"></script>
-  <script src="src/circle_packing.js"></script>
-  <script src="src/hierarchyTree.js"></script>
 
   <script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
 
@@ -87,10 +85,10 @@
     <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
       <div class="nav sidebar-nav">
         <div id="mode-buttons"> <span>Dataset</span><br><br>
-          <button id="diversity-button" class="button button--winona button--all" data-text="Diversity View" onclick="controls.setMode('diversityMode', true);">
+          <button id="diversity-button" class="button btn-raised" data-text="Diversity View" onclick="controls.setMode('diversityMode', true);">
 						<span>Diversity View </span></button>
 
-          <button id="species-button" class="button button--winona button--all" data-text="Species Range Maps" onclick="controls.setMode('speciesMode', true);">
+          <button id="species-button" class="button btn-raised" data-text="Species Range Maps" onclick="controls.setMode('speciesMode', true);">
 						<span>Species Range Maps</span></button>
 
         </div>
@@ -104,13 +102,24 @@
         </button>
       <div class="container-fluid">
         <div class="row">
-          <div class="col-md-6 col-sm-6">
-            <div id="map"></div>
-            <div id="slider"></div>
+          <div class="col-md-6 col-sm-12 col-xs-12 chart-wrapper">
+            <div class="chart-title">
+              Species Distribution &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <button id="resetMap" class="btn btn-info btn-raised">Reset</button>
+            </div>
+            <div id="map" class="chart-area">
+            </div>
+            <div id="slider">
+            </div>
+
+
           </div>
-          <div class="col-md-6 col-sm-6">
-            <!--button id="reset" class="btn btn-raised">Reset</button-->
-            <div id="barChart"></div>
+          <div class="col-md-6 col-sm-12 col-xs-12 chart-wrapper">
+            <div class="chart-title">
+              Taxonomy &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <button id="reset" class="btn btn-info btn-raised">Reset</button>
+            </div>
+            <div id="sunChart" class="chart-area"></div>
           </div>
         </div>
 
