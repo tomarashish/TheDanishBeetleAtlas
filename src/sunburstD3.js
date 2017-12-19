@@ -109,7 +109,7 @@ sunburstD3 = function module() {
         .attr("class", "arc")
         .style("cursor", "pointer")
         //.attr("stroke-width", 1)
-        .attr("stroke", "#FFF")
+        //.attr("stroke", "#FFF")
         .style("fill", getColor)
         .on("click", _clickArc)
         .on("mouseover", _mouseover)
@@ -223,7 +223,7 @@ sunburstD3 = function module() {
       .style("opacity", .8);
 
     //Adding name , id and ncbi link to taxon id
-    div.html("Name : " + d.key)
+    div.html("Name : " + d.data.key)
       .style("left", (d3.event.pageX + 8) + "px") //Position of pointer from tooltip from left
       .style("top", (d3.event.pageY - 20) + "px"); //Position of pointer from tooltip from top
 
@@ -457,7 +457,7 @@ sunburstD3 = function module() {
     while (d.depth > 2) {
       d = d.parent;
     }
-    var c = d3.lab(color(d.key))
+    var c = d3.lab(color(d.data.key))
     //.brighter();
     return c;
   }

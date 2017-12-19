@@ -21,8 +21,9 @@ var svgMap = d3.select("#map").append("svg")
   .attr("width", "100%")
   .attr("height", mapHeight)
   .attr("viewBox", "0 0 970 800")
+  .call(zoom)
   .attr("preserveAspectRatio", "xMidYMid")
-  .call(zoom);
+//.attr("transform", "translate(" + width / 2 + "," + (height / 2) + ")");;
 
 var hexbin = d3.hexbin()
   .extent([[0, 0], [mapWidth, mapHeight]])
@@ -32,10 +33,11 @@ var radius = d3.scaleSqrt()
   .domain([0, 15])
   .range([0, 8]);
 
-var div = d3.select("body")
+//d3 tooltip
+var div = d3.select('body') //select tooltip div over body
   .append("div")
   .attr("class", "tooltip")
-  .style("opacity", 0)
+  .style("opacity", 0);
 
 //https://bl.ocks.org/pstuffa/3393ff2711a53975040077b7453781a9
 var color = d3.scaleOrdinal(d3.schemeCategory20b);
@@ -108,14 +110,14 @@ d3.json("./data/denmark.topo.json", function (error, map) {
         .attr("cy", function (d) {
           if (d.LatLang) return projection(d.LatLang)[1];
         })
-        .attr("r", "2px")
+        .attr("r", "3px")
         //.style("fill","#648d9e");
         .style("fill", function (d, i) {
 
           //if(colorByTaxon == false)
           // return color(d.Taxon);
           //console.log(d)
-          return color(i);
+          return color(d.Family);
           //if(colorByFamily == true)
           //return color(d.Family);
 
@@ -129,17 +131,27 @@ d3.json("./data/denmark.topo.json", function (error, map) {
           if (showToolTip == true) {
             div.transition()
               .duration(500)
-              .style("opacity", 0.9)
+              .style("opacity", 0.9);
+            /*
               .style("text-align", "center")
               .style("background", "#fff8dc")
               .style("border", "2px solid")
               .style("border-color", "black")
               .style("border-radius", "3px")
               .style("pointer-events", "none");
+*/
+            var imgUrl = 'data/img/Gyrinus_minutus.jpg';
 
-            div.text("coordinates are : " + d)
-              .attr("width", "100px")
-              .attr("height", "500px")
+            div.html("Name: " + d.Taxon + '<br>' + "Family: " + d.Family + '<br>' + "Locality : " + d.Lokalitet +
+                '<br>' + " District: " + d.Distrikt + '<br>' + " Year: " + d.DateYear + '<br>' + "<span ><img src = '" + imgUrl + "' height='250' width='230'></span")
+              .style("font-size", "18px")
+              .style("text-align", "center")
+              .style("background", "#fff8dc")
+              .style("color", "#000")
+              .style("font-weight", "bold")
+              .style("border", "2px solid")
+              .style("border-color", "black")
+              .style("border-radius", "3px")
               .style("left", (d3.event.pageX + 10) + "px")
               .style("top", (d3.event.pageY + 30) + "px");
           }
@@ -180,24 +192,24 @@ d3.json("./data/denmark.topo.json", function (error, map) {
     //Add Zooming and panning
 
     /*
-    //Add hexagonal bins with hovering over shows tooltip with piechart
+          //Add hexagonal bins with hovering over shows tooltip with piechart
     
-    hexabinData = cords.map(function(d){
-      var p = projection(d);
-      d[0] = p[0], d[1] = p[1];
-      
-      return d;
-    })
+          hexabinData = cords.map(function(d){
+            var p = projection(d);
+            d[0] = p[0], d[1] = p[1];
+            
+            return d;
+          })
     
-     svgMap.append("g")
-      .attr("class", "hexagon")
-      .selectAll("path")
-      .data(hexbin(hexabinData).sort(function(a, b) { return b.length - a.length; }))
-      .enter().append("path")
-      .attr("d", function(d) { return hexbin.hexagon(radius(2)); })
-      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-      .attr("fill", function(d) { return color(d3.median(d, function(d,i) { return i; })); });
-        */
+           svgMap.append("g")
+            .attr("class", "hexagon")
+            .selectAll("path")
+            .data(hexbin(hexabinData).sort(function(a, b) { return b.length - a.length; }))
+            .enter().append("path")
+            .attr("d", function(d) { return hexbin.hexagon(radius(2)); })
+            .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+            .attr("fill", function(d) { return color(d3.median(d, function(d,i) { return i; })); });
+              */
     /*
     //Adding image marker with map
     svgMap.selectAll(".mark")
