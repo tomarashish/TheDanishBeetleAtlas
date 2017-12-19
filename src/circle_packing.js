@@ -54,12 +54,11 @@ circlePack = function module() {
       .style("fill", function (d) {
         return d.children ? color(d.depth) : null;
       })
+      .style("pointer", "cursor")
       .on("click", function (d) {
         console.log(d)
-        if (focus !== d) zoom(d); // d3.event.stopPropagation();
+        if (focus !== d) zoom(d), d3.event.stopPropagation();
       });
-
-
 
     var text = svg.selectAll("text")
       .data(nodes)
@@ -122,19 +121,6 @@ circlePack = function module() {
         if (d.parent !== focus) this.style.display = "none";
       });
   }
-
-  function zoomTo(v) {
-    var k = diameter / v[2];
-    view = v;
-    node.attr("transform", function (d) {
-      return "translate(" + (d.x - v[0]) * k + "," + (d.y - v[1]) * k + ")";
-    });
-    circle.attr("r", function (d) {
-      return d.r * k;
-    });
-  }
-
-
 
   return exports;
 } //end of module

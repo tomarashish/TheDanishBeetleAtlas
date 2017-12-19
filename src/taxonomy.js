@@ -46,8 +46,8 @@ d3.csv("./../data/BilleDatabase.csv", function (error, taxoData) {
     .datum(groupAsTree(taxoData))
     .call(treeview);
 
-  var chartContainer = d3.select("#imagetree")
-    .datum(groupAsTree(taxoData))
+  //  var chartContainer = d3.select("#imagetree")
+  //.datum(groupAsTree(taxoData))
   // .call(circleview);
 
 });

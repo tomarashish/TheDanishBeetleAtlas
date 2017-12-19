@@ -6,11 +6,11 @@ sliderD3 = function module() {
   var margin = {
       right: 50,
       left: 50,
-      top: 10,
-      bottom: 150
+      top: 5,
+      bottom: 10
     },
     slideWidth = 700,
-    slideHeight = 50,
+    slideHeight = 40,
     sliderWidth = 600;
 
   var dispatcher = d3.dispatch("slide", "other_event");
@@ -38,8 +38,8 @@ sliderD3 = function module() {
       yearLast = _data[1]
 
       var svgSlider = d3.select(this).append("svg")
-        .attr("width", slideWidth)
-        .attr("height", slideHeight)
+        .attr("width", "100%")
+        .attr("height", "100%")
         .attr("viewBox", "0 0 700 50")
         .attr("preserveAspectRatio", "xMidYMid");
 

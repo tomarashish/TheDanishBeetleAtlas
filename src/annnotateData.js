@@ -136,7 +136,7 @@ d3.csv("./../data/BilleDatabase.csv", function (error, taxoData) {
   var sunview = sunburstD3();
   //var sunview = circlePack();
 
-  var chartContainer = d3.select("#barChart")
+  var chartContainer = d3.select("#sunChart")
     .datum(groupAsTree(taxoData))
     .call(sunview);
 
