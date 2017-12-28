@@ -35,7 +35,7 @@ function groupAsTree(data) {
   return treeData;
 }
 
-d3.csv("./../data/BilleDatabase.csv", function (error, taxoData) {
+d3.csv("./data/BilleDatabase.csv", function (error, taxoData) {
   //console.log(JSON.stringify(groupAsTree(taxoData)));
   // console.log(groupAsTree(taxoData));
 

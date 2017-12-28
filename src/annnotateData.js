@@ -129,7 +129,7 @@ function groupAsTree(data) {
 }
 
 //d3.json("data/taxonomy_tree.json", function (error, taxoData) {
-d3.csv("./../data/BilleDatabase.csv", function (error, taxoData) {
+d3.csv("./data/BilleDatabase.csv", function (error, taxoData) {
   //console.log(JSON.stringify(groupAsTree(taxoData)));
   console.log(groupAsTree(taxoData));
 
