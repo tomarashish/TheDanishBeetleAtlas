@@ -75,6 +75,7 @@ body {
   color: #777;
   background-color: #fff;
   overflow-x: hidden;
+  overflow-y: hidden;
   /*hide horizontal overflow*/
 }
 
@@ -119,6 +120,7 @@ container-fluid {
 }
 
 .chart-wrapper .chart-title {
+  font-size: 18px;
   text-transform: uppercase;
   border-bottom: 2px solid #d9d9d9;
   font-weight: bold;
@@ -325,7 +327,7 @@ text {
   font-weight: bolder;
   font-size: 20px;
   font-family: 'Abel', Arial, sans-serif;
-  position: absolute;
+  position: fixed;
   bottom: 0px;
   width: 100%;
   padding-top: 10px;

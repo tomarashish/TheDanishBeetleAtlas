@@ -71,6 +71,7 @@ hierarchyViewer = function module() {
       root.x0 = 0;
       root.y0 = 0;
 
+
       collapseAll(root)
       expand(root);
 
@@ -100,10 +101,13 @@ hierarchyViewer = function module() {
 
     // Compute the "layout". TODO https://github.com/d3/d3-hierarchy/issues/67
     var index = -1;
+
     root.eachBefore(function (n) {
       n.x = ++index * barHeight;
       n.y = n.depth * 40;
     });
+
+
 
     // Update the nodes…
     var node = svgGroup.selectAll("g.node")
@@ -112,7 +116,8 @@ hierarchyViewer = function module() {
       });
 
 
-    nodeEnter = node.enter().append("g")
+    nodeEnter = node.enter()
+      .append("g")
       .attr("class", "node")
       .attr("transform", function (d) {
         return "translate(" + source.y0 + "," + source.x0 + ")";
@@ -152,9 +157,15 @@ hierarchyViewer = function module() {
       .attr('class', 'nodeText')
       .text(function (d) {
         if (d.children) {
-          return '- ' + d.data.key;
+          if (d.data.key)
+            return ' - ' + d.data.key;
+          else
+            return ' - ' + 'unclassified';
         } else if (d._children) {
-          return '+ ' + d.data.key;
+          if (d.data.key)
+            return ' + ' + d.data.key;
+          else
+            return ' + ' + 'unclassified';
         } else {
           return d.data.key;
         }

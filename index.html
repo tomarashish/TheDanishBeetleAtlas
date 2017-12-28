@@ -10,9 +10,10 @@
   <script type="text/javascript" src="src/jquery.js"></script>
   <script src="src/bootstrap.min.js"></script>
   <script src="src/bootstrap-left-slide-menu.js"></script>
-
   <script src="src/d3.v4.min.js" charset="utf-8"></script>
+  <!--script src="//d3js.org/d3-tile.v0.0.min.js"></script-->
   <script src="src/topojson.v1.min.js"></script>
+  <!--script src="src/geo.tile.min.js"></script-->
   <script src="src/queue.v1.min.js"></script>
   <!--script src="src/d3.v3.min.js"></script-->
   <script src="src/sunburstD3.js"></script>
@@ -70,7 +71,7 @@
     </div>
   </nav>
 
-  <footer class="footer">
+  <footer class="footer navbar-fixed-bottom">
     <div class="container">
       <p>Developed By :
         <span><a href="#" target="_blank">Natural History Museum, Denmark</a></span> &nbsp; And &nbsp;
@@ -118,7 +119,7 @@
           <div class="col-md-6 col-sm-12 col-xs-12 chart-wrapper">
             <div class="chart-title">
               Taxonomy &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <button id="reset" class="btn btn-info btn-raised">Reset</button>
+              <button id="resetSunburst" class="btn btn-info btn-raised">Reset</button>
             </div>
             <div id="sunChart" class="chart-area"></div>
           </div>

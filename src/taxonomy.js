@@ -37,7 +37,7 @@ function groupAsTree(data) {
 
 d3.csv("./../data/BilleDatabase.csv", function (error, taxoData) {
   //console.log(JSON.stringify(groupAsTree(taxoData)));
-  console.log(groupAsTree(taxoData));
+  // console.log(groupAsTree(taxoData));
 
   //var circleview = circlePack();
   var treeview = hierarchyViewer();

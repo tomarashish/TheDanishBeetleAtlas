@@ -21,7 +21,7 @@ sunburstD3 = function module() {
   //height = $chart_container.width(),
   var width = 500,
     height = 415,
-    radius = Math.min(width, height) / 2;
+    radius = Math.min(width, height) / 2.5;
 
   // setting d3 partition layout 
   var partition = d3.partition();
@@ -99,11 +99,17 @@ sunburstD3 = function module() {
         .append("g")
         .attr("transform", "translate(" + (width / 2) + "," + (height / 2 + 10) + ")");
 
-      console.log(_data)
+      // Now redefine the value function to use the previously-computed sum.
+
       //Creating a svg path with passed root node 
       this.path = svg.selectAll("path.arc")
         .data(partition(root).descendants())
         .enter()
+        .filter(function (d) {
+          //console.log(_data)
+          if (d.children)
+            return d;
+        })
         .append("path")
         .attr("d", arc)
         .attr("class", "arc")
@@ -118,21 +124,22 @@ sunburstD3 = function module() {
       // Creating an array of chart object
       chartObj.push(this);
 
-      svg.selectAll(".innerlabel")
-        .data(root)
-        .enter().append("text")
-        .attr("class", "innerlabel")
-        .attr("dy", ".35em")
-        .attr("transform", function (d) {
-          return "translate(" + (d.x + d.dx / 2) + "," + (d.y + 10) + ")";
-        })
-        .style("font-size", "10px")
-        .style("font-weight", "bold")
-        .text(function (d) {
-          console.log(d)
-          if (d.key != "Root") return d.key;
-        });
 
+      var texts = svg.selectAll("text")
+        .data(partition(root).descendants())
+        .enter().append("text")
+        //.filter(filter_min_arc_size_text)
+        .attr("transform", function (d) {
+          return "rotate(" + computeTextRotation(d) + ")";
+        })
+        .attr("x", function (d) {
+          return radius / 3 * d.depth;
+        })
+        .attr("dx", "6") // margin
+        .attr("dy", ".35em") // vertical-align	
+        .text(function (d, i) {
+          return d.key
+        })
 
       // creating click buttton on main chart
       if (this.id == "chart") {
@@ -144,7 +151,7 @@ sunburstD3 = function module() {
   } //End of export
 
   //Setting reset and image save button as d3 element
-  $('#reset').on('click', _resetZoom);
+  $('#resetSunburst').on('click', _resetZoom);
 
   // Click function to zoom in or zoom out based on 
   // situation of current node
@@ -206,7 +213,7 @@ sunburstD3 = function module() {
 
     d3.select("#trail")
       .style("visibility", "hidden");
-
+    console.log(root)
     d3.selectAll("path.arc")
       .transition()
       .duration(1000)

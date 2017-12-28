@@ -9,9 +9,9 @@ sliderD3 = function module() {
       top: 5,
       bottom: 10
     },
-    slideWidth = 700,
+    slideWidth = 600,
     slideHeight = 40,
-    sliderWidth = 600;
+    sliderWidth = 500;
 
   var dispatcher = d3.dispatch("slide", "other_event");
 

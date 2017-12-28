@@ -1,5 +1,5 @@
-var mapWidth = 970,
-  mapHeight = 700;
+var mapWidth = 800,
+  mapHeight = 400;
 
 var projection = d3.geoMercator()
   .translate([-1050, 9350])
@@ -19,8 +19,9 @@ var zoom = d3.zoom()
 
 var svgMap = d3.select("#map").append("svg")
   .attr("width", "100%")
-  .attr("height", mapHeight)
-  .attr("viewBox", "0 0 970 800")
+  .attr("height", "100%")
+  .attr('viewBox', '0 0 ' + (mapHeight + 650) + ' ' + mapWidth)
+  //.attr("viewBox", "0 0 970 800")
   .call(zoom)
   .attr("preserveAspectRatio", "xMidYMid")
 //.attr("transform", "translate(" + width / 2 + "," + (height / 2) + ")");;
@@ -117,7 +118,7 @@ d3.json("./data/denmark.topo.json", function (error, map) {
           //if(colorByTaxon == false)
           // return color(d.Taxon);
           //console.log(d)
-          return color(d.Family);
+          return color(d.Distrikt);
           //if(colorByFamily == true)
           //return color(d.Family);
 
