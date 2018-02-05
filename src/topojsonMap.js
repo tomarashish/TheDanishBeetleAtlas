@@ -11,7 +11,7 @@ var path = d3.geoPath()
   .projection(projection);
 
 var minYear,
-  maxYear;
+  maxYear, circles, circleData;
 
 var zoom = d3.zoom()
   .scaleExtent([1, 8])
@@ -88,7 +88,29 @@ d3.json("./data/denmark.topo.json", function (error, map) {
         cords.push(proj4(utm, wgs84, [atlasData[i].XKoord, atlasData[i].YKoord]))
 
         atlasData[i].LatLang = proj4(utm, wgs84, [atlasData[i].XKoord, atlasData[i].YKoord]);
+        console.log("latlang present")
       }
+      /* else {
+
+              var address = atlasData[i].Lokalitet
+
+              // Initialize the Geocoder
+
+              setTimeout(function () {
+                geocoder = new google.maps.Geocoder();
+                if (geocoder) {
+                  geocoder.geocode({
+                    'address': address
+                  }, function (results, status) {
+                    console.log(status)
+                    if (status == google.maps.GeocoderStatus.OK) {
+                      console.log(results[0].geometry.location.lat());
+                      console.log(results[0].geometry.location.lng());
+                    }
+                  });
+                }
+              }, 5000);
+            }*/
     } //end of for loop
 
     circleMarker(atlasData)
@@ -96,9 +118,9 @@ d3.json("./data/denmark.topo.json", function (error, map) {
     // add circles to svg
     function circleMarker(markerData) {
 
-      console.log(markerData)
+      circleData = markerData;
 
-      var circles = svgMap.selectAll(".circle")
+      circles = svgMap.selectAll(".circle")
         .data(markerData)
 
       circles.enter()
@@ -114,58 +136,12 @@ d3.json("./data/denmark.topo.json", function (error, map) {
         .attr("r", "3px")
         //.style("fill","#648d9e");
         .style("fill", function (d, i) {
-
-          //if(colorByTaxon == false)
-          // return color(d.Taxon);
-          //console.log(d)
           return color(d.Distrikt);
-          //if(colorByFamily == true)
-          //return color(d.Family);
-
-          //if(colorNone == false)
-          //return "#00485d";
         })
         // Modification of custom tooltip code provided by Malcolm Maclean, "D3 Tips and Tricks"
         // http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
-        .on("mouseover", function (d) {
-
-          if (showToolTip == true) {
-            div.transition()
-              .duration(500)
-              .style("opacity", 0.9);
-            /*
-              .style("text-align", "center")
-              .style("background", "#fff8dc")
-              .style("border", "2px solid")
-              .style("border-color", "black")
-              .style("border-radius", "3px")
-              .style("pointer-events", "none");
-*/
-            var imgUrl = 'data/img/Gyrinus_minutus.jpg';
-
-            div.html("Name: " + d.Taxon + '<br>' + "Family: " + d.Family + '<br>' + "Locality : " + d.Lokalitet +
-                '<br>' + " District: " + d.Distrikt + '<br>' + " Year: " + d.DateYear + '<br>' + "<span ><img src = '" + imgUrl + "' height='250' width='230'></span")
-              .style("font-size", "18px")
-              .style("text-align", "center")
-              .style("background", "#fff8dc")
-              .style("color", "#000")
-              .style("font-weight", "bold")
-              .style("border", "2px solid")
-              .style("border-color", "black")
-              .style("border-radius", "3px")
-              .style("left", (d3.event.pageX + 10) + "px")
-              .style("top", (d3.event.pageY + 30) + "px");
-          }
-
-        })
-        .on("mouseout", function (d) {
-
-          if (showToolTip == true) {
-            div.transition()
-              .duration(100)
-              .style("opacity", 0);
-          }
-        });
+        .on("mouseover", mouseIn)
+        .on("mouseout", mouseOut);
 
       circles.exit()
         .transition().duration(200)
@@ -182,35 +158,117 @@ d3.json("./data/denmark.topo.json", function (error, map) {
       .call(sliderBar);
 
     sliderBar.on("slide", function (year) {
-
+      console.log("working")
       var filterData = atlasData.filter(function (d) {
         if (d.DateYear >= year[0] && d.DateYear <= year[1])
           return d;
       })
+
+      //if species search button 
+      //filter by species name
+
+      //call circlemarker
       circleMarker(filterData);
     });
 
+    function mouseIn(d) {
+      if (showToolTip == true) {
+        div.transition()
+          .duration(500)
+          .style("opacity", 0.9);
+        /*
+          
+
+        d3.request('http://danbiller.dk/scripts/get_key_beetles.php?q=Gyrinus%20substriatus&key=species')
+          .mimeType("application/json")
+          .response(function (xhr) {
+            return JSON.parse(xhr.responseText);
+          }).get({
+            'id': id,
+            'type': type
+          }, function (error, data) {
+            if (error) throw error;
+            console.log(data);
+          });
+
+*/
+
+        createToolTip(d);
+      }
+
+    }
+
+    function mouseOut() {
+
+      if (showToolTip == true) {
+        div.transition()
+          .duration(100)
+          .style("opacity", 0);
+      }
+    }
+
+    function createToolTip(d) {
+
+      console.log(d);
+
+      var imgUrl = 'http://danbiller.dk/upload/Gyrinus_minutus_F_km-779436900182068512.jpg';
+
+      div.html("Name: " + d.Taxon + '<br>' + "Family: " + d.Family + '<br>' + "Locality : " + d.Lokalitet +
+          '<br>' + " District: " + d.Distrikt + '<br>' + " Year: " + d.DateYear + '<br>' + "<span ><img src = '" + imgUrl + "' height='250' width='230'></span")
+        .style("font-size", "18px")
+        .style("text-align", "center")
+        .style("background", "#fff8dc")
+        .style("color", "#000")
+        .style("font-weight", "bold")
+        .style("border", "2px solid")
+        .style("border-color", "black")
+        .style("border-radius", "3px")
+        .style("left", (d3.event.pageX + 10) + "px")
+        .style("top", (d3.event.pageY + 30) + "px");
+    }
+
+    d3.select("#colorCategory").on("change", function () {
+
+      var sect = document.getElementById("colorCategory");
+      var section = sect.options[sect.selectedIndex].value;
+
+      colorByCategogy(section);
+
+    });
+
+    function colorByCategogy(category) {
+
+      console.log(category);
+
+      svgMap.selectAll(".circle")
+        .data(circleData)
+        .style("fill", function (d, i) {
+          return color(d[category])
+        })
+        .on("mouseover", mouseIn)
+        .on("mouseout", mouseOut);
+    }
     //Add Zooming and panning
 
     /*
-          //Add hexagonal bins with hovering over shows tooltip with piechart
+                //Add hexagonal bins with hovering over shows tooltip with piechart
     
-          hexabinData = cords.map(function(d){
-            var p = projection(d);
-            d[0] = p[0], d[1] = p[1];
-            
-            return d;
-          })
+                hexabinData = cords.map(function(d){
+                  var p = projection(d);
+                  d[0] = p[0], d[1] = p[1];
+                  
+                  return d;
+                })
     
-           svgMap.append("g")
-            .attr("class", "hexagon")
-            .selectAll("path")
-            .data(hexbin(hexabinData).sort(function(a, b) { return b.length - a.length; }))
-            .enter().append("path")
-            .attr("d", function(d) { return hexbin.hexagon(radius(2)); })
-            .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-            .attr("fill", function(d) { return color(d3.median(d, function(d,i) { return i; })); });
-              */
+                 svgMap.append("g")
+                  .attr("class", "hexagon")
+                  .selectAll("path")
+                  .data(hexbin(hexabinData).sort(function(a, b) { return b.length - a.length; }))
+                  .enter().append("path")
+                  .attr("d", function(d) { return hexbin.hexagon(radius(2)); })
+                  .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+                  .attr("fill", function(d) { return color(d3.median(d, function(d,i) { return i; })); });
+                    */
     /*
     //Adding image marker with map
     svgMap.selectAll(".mark")

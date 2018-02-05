@@ -11,6 +11,7 @@
   <script src="src/bootstrap.min.js"></script>
   <script src="src/bootstrap-left-slide-menu.js"></script>
   <script src="src/d3.v4.min.js" charset="utf-8"></script>
+  <script src="src/awesomplete.min.js" charset="utf-8"></script>
   <!--script src="//d3js.org/d3-tile.v0.0.min.js"></script-->
   <script src="src/topojson.v1.min.js"></script>
   <!--script src="src/geo.tile.min.js"></script-->
@@ -85,12 +86,23 @@
     <div class="overlay" style="display: none;"></div>
     <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
       <div class="nav sidebar-nav">
-        <div id="mode-buttons"> <span>Dataset</span><br><br>
-          <button id="diversity-button" class="button btn-raised" data-text="Diversity View" onclick="controls.setMode('diversityMode', true);">
-						<span>Diversity View </span></button>
+        <div id="mode-buttons">
+          <br>
+          <span>Search Species</span><br>
 
-          <button id="species-button" class="button btn-raised" data-text="Species Range Maps" onclick="controls.setMode('speciesMode', true);">
-						<span>Species Range Maps</span></button>
+          <span>Diversity View</span>
+          <br>
+
+          <span>Color By</span>
+          <br>
+          <div>
+            <select id="colorCategory">
+		<option value="Distrikt" selected="selected">District</option>
+		<option value="Lokalitet">Locality</option>
+		<option value="Family">Family</option>
+		<option value="Taxon">Species</option>
+              </select>
+          </div>
 
         </div>
       </div>
