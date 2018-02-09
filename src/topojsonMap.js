@@ -151,6 +151,16 @@ d3.json("./data/denmark.topo.json", function (error, map) {
     } //end of circleMarker funtion
 
 
+    //function searchBy(){
+
+    var input = document.getElementById("searchSpecies");
+    var awesomplete = new Awesomplete(input, {
+      list: ["Ada", "Java", "JavaScript", "Brainfuck", "LOLCODE", "Node.js", "Ruby on Rails"]
+    });
+
+    //awesomplete.list = ["Ada", "Java", "JavaScript", "Brainfuck", "LOLCODE", "Node.js", "Ruby on Rails"];
+    //}
+
     var sliderBar = sliderD3();
 
     var sliderContainer = d3.select("#slider")
@@ -206,6 +216,7 @@ d3.json("./data/denmark.topo.json", function (error, map) {
           .style("opacity", 0);
       }
     }
+
 
     function createToolTip(d) {
 

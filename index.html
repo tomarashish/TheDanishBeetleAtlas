@@ -12,6 +12,7 @@
   <script src="src/bootstrap-left-slide-menu.js"></script>
   <script src="src/d3.v4.min.js" charset="utf-8"></script>
   <script src="src/awesomplete.min.js" charset="utf-8"></script>
+  <script src="src/" charset="utf-8"></script>
   <!--script src="//d3js.org/d3-tile.v0.0.min.js"></script-->
   <script src="src/topojson.v1.min.js"></script>
   <!--script src="src/geo.tile.min.js"></script-->
@@ -32,6 +33,8 @@
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/bootstrap-theme.min.css">
   <link rel="stylesheet" href="css/bootstrap-left-slide-menu.css">
+  <link rel="stylesheet" href="css/awesomplete.css">
+  <link rel="stylesheet" href="css/awesomplete.theme.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
 
   <!-- favicon image -->
@@ -88,11 +91,11 @@
       <div class="nav sidebar-nav">
         <div id="mode-buttons">
           <br>
-          <span>Search Species</span><br>
-
-          <span>Diversity View</span>
-          <br>
-
+          <span>Search Species</span>
+          <div>
+            <input id="searchSpecies" />
+          </div>
+          <br><br>
           <span>Color By</span>
           <br>
           <div>

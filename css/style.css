@@ -247,6 +247,46 @@ html {
   display: block;
 }
 
+.awesomplete input,
+select {
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #fafafa;
+  border-color: #d9d9d9 #ccc #b3b3b3;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  color: #333;
+  cursor: default;
+  display: table;
+  border-spacing: 0;
+  border-collapse: separate;
+  height: 36px;
+  outline: none;
+  overflow: hidden;
+  position: relative;
+  width: 100% !important;
+
+}
+
+.awesomplete > ul {
+  font-size: 14px;
+  font-weight: bold;
+  background-color: #fafafa;
+  color: #333;
+  height: 200px;
+  overflow: scroll;
+  width: 100% !important;
+}
+
+.awesomplete ul > li {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  position: relative;
+  padding: .2em .5em;
+  cursor: pointer;
+}
+
 text {
   cursor: default;
   fill: #FFF;
