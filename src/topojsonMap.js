@@ -11,7 +11,7 @@ var path = d3.geoPath()
   .projection(projection);
 
 var minYear,
-  maxYear, circles, circleData;
+  maxYear, circles, circleData, names = [];
 
 var zoom = d3.zoom()
   .scaleExtent([1, 8])
@@ -34,7 +34,7 @@ var radius = d3.scaleSqrt()
   .domain([0, 15])
   .range([0, 8]);
 
-//d3 tooltip
+//d3 tooltip to display the related metadata of circle markers
 var div = d3.select('body') //select tooltip div over body
   .append("div")
   .attr("class", "tooltip")
@@ -43,12 +43,16 @@ var div = d3.select('body') //select tooltip div over body
 //https://bl.ocks.org/pstuffa/3393ff2711a53975040077b7453781a9
 var color = d3.scaleOrdinal(d3.schemeCategory20b);
 
+//Inititalizing the colorBy values of the circle marker
+// of the cordinates over the map. Using these value to 
+// change the color of the marker using colorByCategogy function
 var colorByFamily = true,
   colorByTaxon = false,
   colorNone = false;
 
 d3.json("./data/denmark.topo.json", function (error, map) {
 
+  // Creating the svgmap for Denmark using denmark topology json data
   svgMap.selectAll("path")
     .data(topojson.feature(map, map.objects.denmarktopo).features)
     .enter().append("path")
@@ -71,7 +75,6 @@ d3.json("./data/denmark.topo.json", function (error, map) {
       return +d.DateYear;
     });
 
-    console.log(maxYear)
     //https://github.com/proj4js/proj4js
     var utm = "+proj=utm +zone=32";
     var wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
@@ -88,7 +91,7 @@ d3.json("./data/denmark.topo.json", function (error, map) {
         cords.push(proj4(utm, wgs84, [atlasData[i].XKoord, atlasData[i].YKoord]))
 
         atlasData[i].LatLang = proj4(utm, wgs84, [atlasData[i].XKoord, atlasData[i].YKoord]);
-        console.log("latlang present")
+        //console.log("latlang present")
       }
       /* else {
 
@@ -113,10 +116,27 @@ d3.json("./data/denmark.topo.json", function (error, map) {
             }*/
     } //end of for loop
 
+    // Making First call to the circle marker to
+    // display the circle on svg map
     circleMarker(atlasData)
+
     //Add markers to map based on coordinates
     // add circles to svg
     function circleMarker(markerData) {
+
+      // Variable to display names in search input field
+      var taxonList = [],
+        familyList = [];
+
+      markerData.forEach(function (d) {
+
+        if (taxonList.indexOf(d.Taxon) == -1)
+          taxonList.push(d.Taxon);
+
+        if (familyList.indexOf(d.Family) == -1)
+          familyList.push(d.Family);
+
+      });
 
       circleData = markerData;
 
@@ -148,18 +168,57 @@ d3.json("./data/denmark.topo.json", function (error, map) {
         .attr("r", "2px")
         .remove();
 
+      // Annotate search list for Species and family input fields 
+      // by passing the taxon name and family name list to awesomplete 
+      // function and input field id
+      searchBy(taxonList, "searchSpecies")
+      searchBy(familyList, "searchFamily")
+
     } //end of circleMarker funtion
 
+    // searchBy function uses the list of names 
+    // and input field id. Internally calling awesomplete method 
+    // to get search list of names in input list   
+    function searchBy(inputList, inputId) {
 
-    //function searchBy(){
+      var input = document.getElementById(inputId);
 
-    var input = document.getElementById("searchSpecies");
-    var awesomplete = new Awesomplete(input, {
-      list: ["Ada", "Java", "JavaScript", "Brainfuck", "LOLCODE", "Node.js", "Ruby on Rails"]
-    });
+      //using the awesomplete function to get input field 
+      // with multiple search names
+      var awesomplete = new Awesomplete(input, {
+        list: inputList,
 
-    //awesomplete.list = ["Ada", "Java", "JavaScript", "Brainfuck", "LOLCODE", "Node.js", "Ruby on Rails"];
-    //}
+        filter: function (text, input) {
+          return Awesomplete.FILTER_CONTAINS(text, input.match(/[^,]*$/)[0]);
+        },
+
+        item: function (text, input) {
+          return Awesomplete.ITEM(text, input.match(/[^,]*$/)[0]);
+        },
+
+        replace: function (text) {
+          var before = this.input.value.match(/^.+,\s*|/)[0];
+          this.input.value = before + text + ", ";
+        }
+      });
+
+    } //end of species and family search function
+
+    d3.select("#searchSp").on("click", getNames)
+
+    function getNames() {
+      names = document.getElementById("searchSpecies").value;
+      console.log(names)
+
+      var filterNames = atlasData.filter(function (d) {
+
+        if (names.indexOf(d.Taxon) != -1)
+          return d;
+      });
+      console.log(filterNames)
+      //call circlemarker with filtered data every time the slider is adjusted
+      circleMarker(filterNames);
+    }
 
     var sliderBar = sliderD3();
 
@@ -168,45 +227,42 @@ d3.json("./data/denmark.topo.json", function (error, map) {
       .call(sliderBar);
 
     sliderBar.on("slide", function (year) {
-      console.log("working")
+
       var filterData = atlasData.filter(function (d) {
         if (d.DateYear >= year[0] && d.DateYear <= year[1])
           return d;
       })
 
-      //if species search button 
+      //if species search button is clicked use getNames() and filter the data
+      // again with the species or family names 
       //filter by species name
 
-      //call circlemarker
-      circleMarker(filterData);
-    });
+      //call circlemarker with filtered data every time the slider is adjusted
+      //circleMarker(filterData);
+    }); // end of sliderbar function
 
     function mouseIn(d) {
+
       if (showToolTip == true) {
         div.transition()
           .duration(500)
           .style("opacity", 0.9);
-        /*
-          
 
-        d3.request('http://danbiller.dk/scripts/get_key_beetles.php?q=Gyrinus%20substriatus&key=species')
-          .mimeType("application/json")
-          .response(function (xhr) {
-            return JSON.parse(xhr.responseText);
-          }).get({
-            'id': id,
-            'type': type
-          }, function (error, data) {
-            if (error) throw error;
-            console.log(data);
-          });
+        createToolTip(d)
+        //d3.request('http://danbiller.dk/scripts/get_key_beetles.php?q=Gyrinus%20substriatus&key=species')
+        /*$.ajax({
+          type: "GET",
+          url: 'http://danbiller.dk/scripts/get_key_beetles.php?q=Gyrinus%20substriatus&key=species',
+          dataType: 'jsonp',
+          success: function (data) {
+            console.log(JSON.stringify(data));
+            createToolTip(d)
+          }
+        });*/
 
-*/
-
-        createToolTip(d);
       }
 
-    }
+    } //end of mouse in
 
     function mouseOut() {
 
@@ -215,7 +271,7 @@ d3.json("./data/denmark.topo.json", function (error, map) {
           .duration(100)
           .style("opacity", 0);
       }
-    }
+    } // end of mouse out
 
 
     function createToolTip(d) {
@@ -243,13 +299,11 @@ d3.json("./data/denmark.topo.json", function (error, map) {
       var sect = document.getElementById("colorCategory");
       var section = sect.options[sect.selectedIndex].value;
 
-      colorByCategogy(section);
+      colorByCategory(section);
 
     });
 
-    function colorByCategogy(category) {
-
-      console.log(category);
+    function colorByCategory(category) {
 
       svgMap.selectAll(".circle")
         .data(circleData)
