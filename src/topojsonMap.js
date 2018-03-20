@@ -46,8 +46,8 @@ var color = d3.scaleOrdinal(d3.schemeCategory20b);
 //Inititalizing the colorBy values of the circle marker
 // of the cordinates over the map. Using these value to 
 // change the color of the marker using colorByCategogy function
-var colorByFamily = true,
-  colorByTaxon = false,
+var colorCategory = 'Distrikt';
+var colorByTaxon = false,
   colorNone = false;
 
 d3.json("./data/denmark.topo.json", function (error, map) {
@@ -80,7 +80,6 @@ d3.json("./data/denmark.topo.json", function (error, map) {
     var wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
     var cords = [];
     for (var i = 0; i < atlasData.length; i++) {
-      //for( var i = 0; i < 500; i++){
 
       //console.log(proj4(utm,wgs84,[6246846,492837]));
       //console.log(atlasData[i].XKoord, atlasData[i].YKoord);
@@ -140,14 +139,17 @@ d3.json("./data/denmark.topo.json", function (error, map) {
 
       circleData = markerData;
 
+
       circles = svgMap.selectAll(".circle")
         .data(markerData)
+
+      console.log(circles);
 
       circles.enter()
         .append("circle")
         .attr("class", "circle")
-        //.filter(function(d) {return d.DateYear < 1900 })
         .attr("cx", function (d) {
+          //if (d.LatLang) console.log(d);
           if (d.LatLang) return projection(d.LatLang)[0];
         })
         .attr("cy", function (d) {
@@ -155,8 +157,8 @@ d3.json("./data/denmark.topo.json", function (error, map) {
         })
         .attr("r", "3px")
         //.style("fill","#648d9e");
-        .style("fill", function (d, i) {
-          return color(d.Distrikt);
+        .style("fill", function (d) {
+          return color(d[colorCategory]);
         })
         // Modification of custom tooltip code provided by Malcolm Maclean, "D3 Tips and Tricks"
         // http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
@@ -208,14 +210,14 @@ d3.json("./data/denmark.topo.json", function (error, map) {
 
     function getNames() {
       names = document.getElementById("searchSpecies").value;
-      console.log(names)
 
       var filterNames = atlasData.filter(function (d) {
 
         if (names.indexOf(d.Taxon) != -1)
           return d;
       });
-      console.log(filterNames)
+
+      //console.log(filterNames)
       //call circlemarker with filtered data every time the slider is adjusted
       circleMarker(filterNames);
     }
@@ -238,7 +240,7 @@ d3.json("./data/denmark.topo.json", function (error, map) {
       //filter by species name
 
       //call circlemarker with filtered data every time the slider is adjusted
-      //circleMarker(filterData);
+      circleMarker(filterData);
     }); // end of sliderbar function
 
     function mouseIn(d) {
@@ -248,21 +250,61 @@ d3.json("./data/denmark.topo.json", function (error, map) {
           .duration(500)
           .style("opacity", 0.9);
 
-        createToolTip(d)
-        //d3.request('http://danbiller.dk/scripts/get_key_beetles.php?q=Gyrinus%20substriatus&key=species')
-        /*$.ajax({
-          type: "GET",
-          url: 'http://danbiller.dk/scripts/get_key_beetles.php?q=Gyrinus%20substriatus&key=species',
-          dataType: 'jsonp',
-          success: function (data) {
-            console.log(JSON.stringify(data));
-            createToolTip(d)
-          }
-        });*/
+        /* var xhr = createCORSRequest('GET', 'http://danbiller.dk/scripts/get_key_beetles.php?q=Gyrinus%20substriatus&key=species');
+        if (!xhr) {
+          throw new Error('CORS not supported');
+        }
+
+        xhr.onload = function () {
+          var responseText = xhr.responseText;
+          console.log(responseText);
+          createToolTip(d)
+          // process the response.
+        };
+*/
+
+        function getCORS(url, success) {
+          var xhr = new XMLHttpRequest();
+          if (!('withCredentials' in xhr)) xhr = new XDomainRequest();
+          xhr.open('GET', url);
+          xhr.onload = success;
+          xhr.send();
+          return xhr;
+        }
+
+        // example request
+        getCORS('http://danbiller.dk/scripts/get_key_beetles.php?q=Gyrinus%20substriatus&key=species', function (request) {
+          var response = request.currentTarget.response || request.target.responseText;
+          console.log(response);
+        });
 
       }
 
     } //end of mouse in
+
+    function createCORSRequest(method, url) {
+      var xhr = new XMLHttpRequest();
+      if ("withCredentials" in xhr) {
+
+        // Check if the XMLHttpRequest object has a "withCredentials" property.
+        // "withCredentials" only exists on XMLHTTPRequest2 objects.
+        xhr.open(method, url, true);
+
+      } else if (typeof XDomainRequest != "undefined") {
+
+        // Otherwise, check if XDomainRequest.
+        // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+        xhr = new XDomainRequest();
+        xhr.open(method, url);
+
+      } else {
+
+        // Otherwise, CORS is not supported by the browser.
+        xhr = null;
+
+      }
+      return xhr;
+    } //end of createCORSRequest
 
     function mouseOut() {
 
@@ -276,7 +318,7 @@ d3.json("./data/denmark.topo.json", function (error, map) {
 
     function createToolTip(d) {
 
-      console.log(d);
+      //console.log(d);
 
       var imgUrl = 'http://danbiller.dk/upload/Gyrinus_minutus_F_km-779436900182068512.jpg';
 
@@ -305,10 +347,12 @@ d3.json("./data/denmark.topo.json", function (error, map) {
 
     function colorByCategory(category) {
 
+      colorCategory = category;
+
       svgMap.selectAll(".circle")
         .data(circleData)
         .style("fill", function (d, i) {
-          return color(d[category])
+          return color(d[colorCategory])
         })
         .on("mouseover", mouseIn)
         .on("mouseout", mouseOut);
