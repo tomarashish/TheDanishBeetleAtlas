@@ -249,39 +249,55 @@ d3.json("./data/denmark.topo.json", function (error, map) {
         div.transition()
           .duration(500)
           .style("opacity", 0.9);
+        // the pageX and pageY value 
+        var pageX = d3.event.pageX,
+          pageY = d3.event.pageY;
 
-        /* var xhr = createCORSRequest('GET', 'http://danbiller.dk/scripts/get_key_beetles.php?q=Gyrinus%20substriatus&key=species');
-        if (!xhr) {
-          throw new Error('CORS not supported');
-        }
-
-        xhr.onload = function () {
-          var responseText = xhr.responseText;
-          console.log(responseText);
-          createToolTip(d)
-          // process the response.
-        };
-*/
-
-        function getCORS(url, success) {
-          var xhr = new XMLHttpRequest();
-          if (!('withCredentials' in xhr)) xhr = new XDomainRequest();
-          xhr.open('GET', url);
-          xhr.onload = success;
-          xhr.send();
-          return xhr;
-        }
+        var speciesName = d.Taxon.replace(/\s/, '%20');
+        var SpeciesUrl = "http://danbiller.dk/scripts/get_key_beetles.php?q=" +
+          speciesName + "&key=species";
 
         // example request
-        getCORS('http://danbiller.dk/scripts/get_key_beetles.php?q=Gyrinus%20substriatus&key=species', function (request) {
+        getCORS(SpeciesUrl, function (request) {
           var response = request.currentTarget.response || request.target.responseText;
-          console.log(response);
+          console.log(response)
+          var jsonGet = JSON.parse(response);
+          var getUrl, imgUrl;
+
+          if (jsonGet[0]['Url']) {
+            getUrl = jsonGet[0]['Url'];
+            imgUrl = 'http://danbiller.dk' + getUrl;
+          } else
+            imgUrl = '/data/img/placeholder.jpg'
+
+
+          div.html("Name: " + d.Taxon + '<br>' + "Family: " + d.Family + '<br>' + "Locality : " + d.Lokalitet +
+              '<br>' + " District: " + d.Distrikt + '<br>' + " Year: " + d.DateYear + '<br>' + "<span ><img src = '" + imgUrl + "' height='250' width='230'></span")
+            .style("font-size", "18px")
+            .style("text-align", "center")
+            .style("background", "#fff8dc")
+            .style("color", "#000")
+            .style("font-weight", "bold")
+            .style("border", "2px solid")
+            .style("border-color", "black")
+            .style("border-radius", "3px")
+            .style("left", (pageX + 10) + "px")
+            .style("top", (pageY + 30) + "px");
         });
 
       }
 
     } //end of mouse in
 
+
+    function getCORS(url, success) {
+      var xhr = new XMLHttpRequest();
+      if (!('withCredentials' in xhr)) xhr = new XDomainRequest();
+      xhr.open('GET', url);
+      xhr.onload = success;
+      xhr.send();
+      return xhr;
+    }
 
 
     function mouseOut() {
@@ -338,24 +354,24 @@ d3.json("./data/denmark.topo.json", function (error, map) {
     //Add Zooming and panning
 
     /*
-                //Add hexagonal bins with hovering over shows tooltip with piechart
-    
-                hexabinData = cords.map(function(d){
-                  var p = projection(d);
-                  d[0] = p[0], d[1] = p[1];
-                  
-                  return d;
-                })
-    
-                 svgMap.append("g")
-                  .attr("class", "hexagon")
-                  .selectAll("path")
-                  .data(hexbin(hexabinData).sort(function(a, b) { return b.length - a.length; }))
-                  .enter().append("path")
-                  .attr("d", function(d) { return hexbin.hexagon(radius(2)); })
-                  .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-                  .attr("fill", function(d) { return color(d3.median(d, function(d,i) { return i; })); });
-                    */
+                            //Add hexagonal bins with hovering over shows tooltip with piechart
+      
+                            hexabinData = cords.map(function(d){
+                              var p = projection(d);
+                              d[0] = p[0], d[1] = p[1];
+                              
+                              return d;
+                            })
+      
+                             svgMap.append("g")
+                              .attr("class", "hexagon")
+                              .selectAll("path")
+                              .data(hexbin(hexabinData).sort(function(a, b) { return b.length - a.length; }))
+                              .enter().append("path")
+                              .attr("d", function(d) { return hexbin.hexagon(radius(2)); })
+                              .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+                              .attr("fill", function(d) { return color(d3.median(d, function(d,i) { return i; })); });
+                                */
     /*
     //Adding image marker with map
     svgMap.selectAll(".mark")
