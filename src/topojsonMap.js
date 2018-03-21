@@ -260,7 +260,7 @@ d3.json("./data/denmark.topo.json", function (error, map) {
         // example request
         getCORS(SpeciesUrl, function (request) {
           var response = request.currentTarget.response || request.target.responseText;
-          console.log(response)
+
           var jsonGet = JSON.parse(response);
           var getUrl, imgUrl;
 
@@ -268,7 +268,7 @@ d3.json("./data/denmark.topo.json", function (error, map) {
             getUrl = jsonGet[0]['Url'];
             imgUrl = 'http://danbiller.dk' + getUrl;
           } else
-            imgUrl = '/data/img/placeholder.jpg'
+            imgUrl = '/data/img/placeholder.jpg';
 
 
           div.html("Name: " + d.Taxon + '<br>' + "Family: " + d.Family + '<br>' + "Locality : " + d.Lokalitet +
