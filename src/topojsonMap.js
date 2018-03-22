@@ -267,9 +267,9 @@ d3.json("./data/denmark.topo.json", function (error, map) {
           if (jsonGet[0]['Url']) {
             getUrl = jsonGet[0]['Url'];
             imgUrl = 'http://danbiller.dk' + getUrl;
-          } else
+          } else {
             imgUrl = '/data/img/placeholder.jpg';
-
+          }
 
           div.html("Name: " + d.Taxon + '<br>' + "Family: " + d.Family + '<br>' + "Locality : " + d.Lokalitet +
               '<br>' + " District: " + d.Distrikt + '<br>' + " Year: " + d.DateYear + '<br>' + "<span ><img src = '" + imgUrl + "' height='250' width='230'></span")

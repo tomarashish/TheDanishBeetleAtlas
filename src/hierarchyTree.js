@@ -42,6 +42,7 @@ hierarchyViewer = function module() {
   // Misc. variables
   var i = 0;
 
+
   // Custom color category 
   var color = d3.scaleOrdinal().range(["#8dd3c7", "#1f78b4", "#e5c494", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#bc80bd", "#ccebc5", "#ffed6f", "#b15928"]);
 
@@ -286,7 +287,7 @@ hierarchyViewer = function module() {
     //collapseAll(root)
     //expand(d)
     update(d);
-    //updateImageView(d);
+    updateImageView(d);
     //centerNode(newPath, obj.id);
 
   } //end of click
@@ -295,21 +296,59 @@ hierarchyViewer = function module() {
   //function takes the d3 root or child object returned by the click() event
   // call createDynamicDivs() to create div element for the images retrieved 
   // from the danbiller.dk 
-  function updateImgeView(d) {
+  function updateImageView(d) {
     console.log(d)
 
-    //createDynamicDivs()
+    reteiveImageData(d);
+
+    //createDynamicDivs(imageUrls)
   }
 
   // Function to create dynamic img div elements based on the 
   // JSON data retirved from the db query  
-  function createDynamicDivs() {
+  function createDynamicDivs(imageUrlList) {
+
 
   }
 
   //Function to retreive the 
-  function reteiveImageData() {
+  function reteiveImageData(nodeObject) {
 
+    var urlList = [];
+
+    var phylumKey = {
+      0: 'root',
+      1: 'order',
+      2: 'superfamily',
+      3: 'family',
+      4: 'subfamily',
+      5: 'tribe',
+      6: 'genus',
+      7: 'species'
+    }
+
+    var phylumName = phylumKey[nodeObject.depth];
+
+    //http://danbiller.dk/scripts/get_key_beetles.php?q={category}&key={level}
+    var phylumUrl = "http://danbiller.dk/scripts/get_key_beetles.php?q=" +
+      nodeObject.data.key + "&key=" + phylumName + " ";
+
+    console.log(phylumName)
+    // example request
+    getCORS(phylumUrl, function (request) {
+      var response = request.currentTarget.response || request.target.responseText;
+      console.log(response)
+    })
+
+  } //end of reteiveImageData
+
+  function getCORS(url, success) {
+    var xhr = new XMLHttpRequest();
+    if (!('withCredentials' in xhr)) xhr = new XDomainRequest();
+    xhr.open('GET', url);
+    xhr.onload = success;
+    xhr.send();
+    return xhr;
   }
 
   // To get path of node of each chart

@@ -507,11 +507,10 @@ li {
 
 #imageView {
   height: 600px;
-}
-
-#imageArea {
   overflow-y: auto;
 }
+
+#imageArea {}
 
 .imageWrapper {
   width: 215px;
