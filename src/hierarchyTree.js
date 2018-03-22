@@ -76,6 +76,7 @@ hierarchyViewer = function module() {
       expand(root);
 
       update(root);
+      //updateImageView(d);
       chartObj.push(this);
 
     }) //end of selections
@@ -285,9 +286,31 @@ hierarchyViewer = function module() {
     //collapseAll(root)
     //expand(d)
     update(d);
+    //updateImageView(d);
     //centerNode(newPath, obj.id);
 
   } //end of click
+
+  //function to change the images at #imageView in taxonomy.html
+  //function takes the d3 root or child object returned by the click() event
+  // call createDynamicDivs() to create div element for the images retrieved 
+  // from the danbiller.dk 
+  function updateImgeView(d) {
+    console.log(d)
+
+    //createDynamicDivs()
+  }
+
+  // Function to create dynamic img div elements based on the 
+  // JSON data retirved from the db query  
+  function createDynamicDivs() {
+
+  }
+
+  //Function to retreive the 
+  function reteiveImageData() {
+
+  }
 
   // To get path of node of each chart
   // Receives two argument 1 : data obejct and

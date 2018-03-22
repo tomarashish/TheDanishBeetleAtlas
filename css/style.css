@@ -500,12 +500,29 @@ li {
 */
 
 #reftree {
-  height: 750px;
+  height: 550px;
   overflow-y: auto;
   overflow-x: auto;
 }
 
-#imagetree {
-  height: 750px;
+#imageView {
+  height: 600px;
+}
+
+#imageArea {
   overflow-y: auto;
+}
+
+.imageWrapper {
+  width: 215px;
+  padding-top: 5px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.imageWrapper img {
+  width: 205px;
+  height: 235px;
+  border: solid 1px #555;
+  border-radius: 5px;
 }
