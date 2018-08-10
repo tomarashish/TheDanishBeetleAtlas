@@ -5,26 +5,27 @@
 
 hierarchyViewer = function module() {
 
-  /* var tree = d3.layout.tree()
+   var tree = d3.tree()
     .size([0, 250])
-    .children(function (d) {
-      return d.values; //change araay values to children attribute
-    })
+  //  .children(function (d) {
+    //  return d.values; //change araay values to children attribute
+    //})
   // .value(function (d) {
   // return d.key;
   // });
   //.sort(d3.ascending);
-*/
+
   var margin = {
       top: 50,
       right: 20,
       bottom: 30,
       left: 20
-    },
-    width = 600 - margin.left - margin.right,
+    };
+
+    var width = 600 - margin.left - margin.right,
     height = 50000 - margin.top - margin.bottom,
     barHeight = 50,
-    barWidth = width * .5;
+    barWidth = width * 0.5;
 
   var i = 0,
     duration = 100,
@@ -43,7 +44,7 @@ hierarchyViewer = function module() {
   var i = 0;
 
 
-  // Custom color category 
+  // Custom color category
   var color = d3.scaleOrdinal().range(["#8dd3c7", "#1f78b4", "#e5c494", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#bc80bd", "#ccebc5", "#ffed6f", "#b15928"]);
 
   function exports(_selection) {
@@ -63,7 +64,7 @@ hierarchyViewer = function module() {
 
       //root = _data;
       root = d3.hierarchy(_data, function (d) {
-          return d.values;
+            return d.values;
         })
         .sum(function (d) {
           return 1;
@@ -77,7 +78,7 @@ hierarchyViewer = function module() {
       expand(root);
 
       update(root);
-      //updateImageView(d);
+      updateImageView(root);
       chartObj.push(this);
 
     }) //end of selections
@@ -85,7 +86,8 @@ hierarchyViewer = function module() {
 
   function update(source) {
 
-    nodes = root.descendants();
+    nodes = tree(root).descendants();
+    links = tree(root).descendants().slice(1);
 
     //nodes.filter(function (d) {
 
@@ -294,24 +296,24 @@ hierarchyViewer = function module() {
 
   //function to change the images at #imageView in taxonomy.html
   //function takes the d3 root or child object returned by the click() event
-  // call createDynamicDivs() to create div element for the images retrieved 
-  // from the danbiller.dk 
+  // call createDynamicDivs() to create div element for the images retrieved
+  // from the danbiller.dk
   function updateImageView(d) {
-    console.log(d)
+   console.log(d)
 
     reteiveImageData(d);
 
     //createDynamicDivs(imageUrls)
   }
 
-  // Function to create dynamic img div elements based on the 
-  // JSON data retirved from the db query  
+  // Function to create dynamic img div elements based on the
+  // JSON data retirved from the db query
   function createDynamicDivs(imageUrlList) {
 
 
   }
 
-  //Function to retreive the 
+  //Function to retreive the
   function reteiveImageData(nodeObject) {
 
     var urlList = [];
@@ -411,9 +413,9 @@ hierarchyViewer = function module() {
         });
       }
     }
-  } //end of expand function 
+  } //end of expand function
 
-  // Function to get same color for child based on color of parent. 
+  // Function to get same color for child based on color of parent.
   // Using d3.hsl as color palette
   function getColor(d) {
 

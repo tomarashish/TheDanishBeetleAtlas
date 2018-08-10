@@ -24,11 +24,14 @@ function groupAsTree(data) {
       .key(function (d) {
         return d.Tribus;
       })
-      .key(function (d) {
-        return d.Slægt;
-      })
+     //.key(function (d) {
+       //return d.Slægt;
+    //  })
       .key(function (d) {
         return d.Art;
+      })
+      .rollup(function(v){
+        return v.length;
       })
       .entries(data)
   };
