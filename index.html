@@ -12,12 +12,14 @@
   <script src="src/bootstrap-left-slide-menu.js"></script>
   <script src="src/d3.v4.min.js" charset="utf-8"></script>
   <script src="src/awesomplete.min.js" charset="utf-8"></script>
-  <!--script src="//d3js.org/d3-tile.v0.0.min.js"></script-->
   <script src="src/topojson.v1.min.js"></script>
-  <!--script src="src/geo.tile.min.js"></script-->
   <script src="src/queue.v1.min.js"></script>
+    <script type="text/javascript" src="src/jquery.dataTables.min.js"></script>
+  <script src="src/tableView.js"></script>
+  <!--script src="//d3js.org/d3-tile.v0.0.min.js"></script-->
+  <!--script src="src/geo.tile.min.js"></script-->
   <!--script src="src/d3.v3.min.js"></script-->
-  <script src="src/sunburstD3.js"></script>
+  <!--script src="src/sunburstD3.js"></script-->
 
   <script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
 
@@ -133,16 +135,38 @@
 
             </div>
             <div id="slider" class="chart-area"> </div>
-
-
-
           </div>
+
           <div class="col-md-6 col-sm-12 col-xs-12 chart-wrapper">
             <div class="chart-title">
-              Taxonomy &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <button id="resetSunburst" class="btn btn-info btn-raised">Reset</button>
+            Classification and Image View
+              <!--button id="resetSunburst" class="btn btn-info btn-raised">Reset</button-->
             </div>
-            <div id="sunChart" class="chart-area"></div>
+            <div id="sunChart" class="chart-area">
+              <div class="col-md-4 col-sm-4 col-xs-4" style="font-size:16px">
+              </br></br></br></br>
+                <span><span>
+                </br>
+                Overfamilie: unclassified
+              </br>
+                Familie: unclassified
+              </br>
+                <div>Scientific Name: unclassified</div>
+                <div>Locality: unknown</div>
+              </div>
+
+              <div><img src="data/img/placeholder.jpg" style="height:535px;" class="center col-md-8 col-sm-8 col-xs-8"></div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" style="margin-bottom:50px;">
+          <div class="col-md-12 col-sm-12 col-xs-12 chart-wrapper">
+            <div class="chart-title">
+              Table View
+            </div>
+            <div id="tableView" class="chart-area"></div>
           </div>
         </div>
 

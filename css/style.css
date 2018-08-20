@@ -74,9 +74,19 @@ body {
   font-family: 'Abel', Arial, sans-serif;
   color: #777;
   background-color: #fff;
-  overflow-x: hidden;
+
+  /*hide horizontal overflow
   overflow-y: hidden;
-  /*hide horizontal overflow*/
+  overflow-x: hidden;
+  */
+}
+
+table {
+    display: table;
+    border-collapse: separate;
+    border-spacing: 4px;
+    border-color: grey;
+    font-size: 20px !important;
 }
 
 container-fluid {
@@ -179,7 +189,7 @@ container-fluid {
     -moz-transition-duration: 0.8s;
     -o-transition-duration: 0.8s;
     transition-duration: 0.8s;
-     
+
     -webkit-transition-property: -webkit-transform;
     -moz-transition-property: -moz-transform;
     -o-transition-property: -o-transform;
@@ -499,6 +509,9 @@ li {
 }
 */
 
+#sunburst, #map{
+height: 470px;
+}
 #reftree {
   height: 550px;
   overflow-y: auto;

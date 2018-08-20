@@ -22,7 +22,7 @@ var svgMap = d3.select("#map").append("svg")
   .attr("height", "100%")
   .attr('viewBox', '0 0 ' + (mapHeight + 650) + ' ' + mapWidth)
   //.attr("viewBox", "0 0 970 800")
-  .call(zoom)
+  //.call(zoom)
   .attr("preserveAspectRatio", "xMidYMid")
 //.attr("transform", "translate(" + width / 2 + "," + (height / 2) + ")");;
 
@@ -44,11 +44,13 @@ var div = d3.select('body') //select tooltip div over body
 var color = d3.scaleOrdinal(d3.schemeCategory20b);
 
 //Inititalizing the colorBy values of the circle marker
-// of the cordinates over the map. Using these value to 
+// of the cordinates over the map. Using these value to
 // change the color of the marker using colorByCategogy function
 var colorCategory = 'Distrikt';
 var colorByTaxon = false,
   colorNone = false;
+
+var atlasData;
 
 d3.json("./data/denmark.topo.json", function (error, map) {
 
@@ -62,11 +64,15 @@ d3.json("./data/denmark.topo.json", function (error, map) {
     .style("stroke-width", "2px");
 
   queue()
-    .defer(d3.csv, './data/merge_data.csv')
+    .defer(d3.csv, './data/output3.csv')
     .await(createMarker);
 
+});//end of read topojson
+
   //create map from combined data
-  function createMarker(error, atlasData) {
+  function createMarker(error, mapData) {
+
+    atlasData = mapData;
 
     maxYear = d3.max(atlasData, function (d) {
       return +d.DateYear;
@@ -75,53 +81,49 @@ d3.json("./data/denmark.topo.json", function (error, map) {
       return +d.DateYear;
     });
 
-    //https://github.com/proj4js/proj4js
-    var utm = "+proj=utm +zone=32";
-    var wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
-    var cords = [];
-    for (var i = 0; i < atlasData.length; i++) {
+    createSlider();
+    updateMarker(atlasData);
 
-      //console.log(proj4(utm,wgs84,[6246846,492837]));
-      //console.log(atlasData[i].XKoord, atlasData[i].YKoord);
+  } //end of createMarker
 
-      if (atlasData[i].XKoord != "NA" || atlasData[i].YKoord != "NA") {
-        var LatLang = [];
 
-        cords.push(proj4(utm, wgs84, [atlasData[i].XKoord, atlasData[i].YKoord]))
+  function resetMap(){
 
-        atlasData[i].LatLang = proj4(utm, wgs84, [atlasData[i].XKoord, atlasData[i].YKoord]);
-        //console.log("latlang present")
-      }
-      /* else {
+      updateMarker(atlasData)
+  }
 
-              var address = atlasData[i].Lokalitet
+  function createTable(tableData){
 
-              // Initialize the Geocoder
+    //var rowData = Object.keys(atlasData[0]);
 
-              setTimeout(function () {
-                geocoder = new google.maps.Geocoder();
-                if (geocoder) {
-                  geocoder.geocode({
-                    'address': address
-                  }, function (results, status) {
-                    console.log(status)
-                    if (status == google.maps.GeocoderStatus.OK) {
-                      console.log(results[0].geometry.location.lat());
-                      console.log(results[0].geometry.location.lng());
-                    }
-                  });
-                }
-              }, 5000);
-            }*/
-    } //end of for loop
+    var table_plot = makeTable()
+      //.datum(rowData)
+	   .datum(tableData)
+     //.sortBy('pval', true)
+     .filterCols(['DateDay', 'DateMonth', 'YKoord', "XKoord", "Note"]);
 
-    // Making First call to the circle marker to
-    // display the circle on svg map
-    circleMarker(atlasData)
+     d3.select('#gene_table_wrapper').remove();
+     d3.select('#tableView').call(table_plot);
 
+     table_plot.on('highlight', function(data, on_off){
+       if(on_off){//if the data is highlighted
+         d3.select('#highlighted').text(
+           'Oops, I just stepped over gene ' + data.symb
+         );
+       }
+     });
+
+  }//end of createTable
+
+
+  function updateTable(){
+
+  }
     //Add markers to map based on coordinates
     // add circles to svg
-    function circleMarker(markerData) {
+    function updateMarker(markerData) {
+
+        createTable(markerData);
 
       // Variable to display names in search input field
       var taxonList = [],
@@ -139,21 +141,20 @@ d3.json("./data/denmark.topo.json", function (error, map) {
 
       circleData = markerData;
 
-
       circles = svgMap.selectAll(".circle")
         .data(markerData)
 
-      console.log(circles);
 
       circles.enter()
         .append("circle")
         .attr("class", "circle")
         .attr("cx", function (d) {
-          //if (d.LatLang) console.log(d);
-          if (d.LatLang) return projection(d.LatLang)[0];
+            if (d.Lat != "")
+            return projection([d.Lng, d.Lat])[0];
         })
         .attr("cy", function (d) {
-          if (d.LatLang) return projection(d.LatLang)[1];
+            if (d.Lng != "")
+            return projection([d.Lng, d.Lat])[1];
         })
         .attr("r", "3px")
         //.style("fill","#648d9e");
@@ -170,22 +171,22 @@ d3.json("./data/denmark.topo.json", function (error, map) {
         .attr("r", "2px")
         .remove();
 
-      // Annotate search list for Species and family input fields 
-      // by passing the taxon name and family name list to awesomplete 
+      // Annotate search list for Species and family input fields
+      // by passing the taxon name and family name list to awesomplete
       // function and input field id
       searchBy(taxonList, "searchSpecies")
       searchBy(familyList, "searchFamily")
 
     } //end of circleMarker funtion
 
-    // searchBy function uses the list of names 
-    // and input field id. Internally calling awesomplete method 
-    // to get search list of names in input list   
+    // searchBy function uses the list of names
+    // and input field id. Internally calling awesomplete method
+    // to get search list of names in input list
     function searchBy(inputList, inputId) {
 
       var input = document.getElementById(inputId);
 
-      //using the awesomplete function to get input field 
+      //using the awesomplete function to get input field
       // with multiple search names
       var awesomplete = new Awesomplete(input, {
         list: inputList,
@@ -207,21 +208,23 @@ d3.json("./data/denmark.topo.json", function (error, map) {
     } //end of species and family search function
 
     d3.select("#searchSp").on("click", getNames)
+  //  d3.select("#searchFamily").on("click", getNames)
 
     function getNames() {
       names = document.getElementById("searchSpecies").value;
-
+      console.log(atlasData);
       var filterNames = atlasData.filter(function (d) {
 
         if (names.indexOf(d.Taxon) != -1)
           return d;
       });
 
-      //console.log(filterNames)
+      console.log(filterNames)
       //call circlemarker with filtered data every time the slider is adjusted
-      circleMarker(filterNames);
+      updateMarker(filterNames);
     }
 
+  function createSlider(){
     var sliderBar = sliderD3();
 
     var sliderContainer = d3.select("#slider")
@@ -236,12 +239,13 @@ d3.json("./data/denmark.topo.json", function (error, map) {
       })
 
       //if species search button is clicked use getNames() and filter the data
-      // again with the species or family names 
+      // again with the species or family names
       //filter by species name
 
       //call circlemarker with filtered data every time the slider is adjusted
-      circleMarker(filterData);
+      updateMarker(filterData);
     }); // end of sliderbar function
+}//end of slider
 
     function mouseIn(d) {
 
@@ -249,7 +253,7 @@ d3.json("./data/denmark.topo.json", function (error, map) {
         div.transition()
           .duration(500)
           .style("opacity", 0.9);
-        // the pageX and pageY value 
+        // the pageX and pageY value
         var pageX = d3.event.pageX,
           pageY = d3.event.pageY;
 
@@ -355,14 +359,14 @@ d3.json("./data/denmark.topo.json", function (error, map) {
 
     /*
                             //Add hexagonal bins with hovering over shows tooltip with piechart
-      
+
                             hexabinData = cords.map(function(d){
                               var p = projection(d);
                               d[0] = p[0], d[1] = p[1];
-                              
+
                               return d;
                             })
-      
+
                              svgMap.append("g")
                               .attr("class", "hexagon")
                               .selectAll("path")
@@ -385,20 +389,20 @@ d3.json("./data/denmark.topo.json", function (error, map) {
     .attr("transform", function(d) {return "translate(" + projection([d[0],d[1]]) + ")";});
 
     */
-    //Heatmap 
+    //Heatmap
     //http://bl.ocks.org/kaijiezhou/82d0b794e845294b366e
 
-  } //end cordinates csv
+  //} //end cordinates csv
 
   //Using slider module with dispatch function to get the handle value
   // Using the handle value (Years) changing the filter to create the filtered markers
 
 
-  //.on("MoveSlider", function(d, i) { 
-  //  d3.select("#message").text(d); 
+  //.on("MoveSlider", function(d, i) {
+  //  d3.select("#message").text(d);
   //});
 
-});
+
 
 function zoomed() {
   svgMap.style("stroke-width", 1.5 / d3.event.transform.k + "px");
