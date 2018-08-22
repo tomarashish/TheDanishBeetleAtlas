@@ -24,7 +24,7 @@ hierarchyViewer = function module() {
 
     var width = 600 - margin.left - margin.right,
     height = 50000 - margin.top - margin.bottom,
-    barHeight = 50,
+    barHeight = 45,
     barWidth = width * 0.5;
 
   var i = 0,
@@ -108,7 +108,7 @@ hierarchyViewer = function module() {
 
     root.eachBefore(function (n) {
       n.x = ++index * barHeight;
-      n.y = n.depth * 40;
+      n.y = n.depth * 35;
     });
 
 
@@ -140,18 +140,23 @@ hierarchyViewer = function module() {
     // Enter any new nodes at the parent's previous position.
     nodeEnter.append("rect")
       .attr("y", -barHeight / 2)
-      .attr("x", 5)
-      .attr("rx", "20px")
-      .attr("ry", "20px")
-      .attr("height", barHeight - 1)
-      .attr("width", barWidth - 30)
+      .attr("x", -15)
+      .attr("rx", "10px")
+      .attr("ry", "10px")
+      .attr("height", barHeight - 5)
+      .attr("width", function(d){
+        if(d.data.key)
+          return (d.data.key.length + 20) * 6;
+          else
+            return 130;
+      })
       .style("fill", getColor)
       .on("click", click);
 
     nodeEnter.append("text")
       .attr("dy", 3.5)
       .attr("dx", 5.5)
-      .style("font-size", "22px")
+      .style("font-size", "18px")
       //.style("font-weight", "bold")
       .text(function (d) {
         return d.data.key;
@@ -213,6 +218,7 @@ hierarchyViewer = function module() {
       .attr("class", "link")
       .style("fill", "none")
       .style("stroke", "grey")
+      .style("stroke-width", "1px")
       .attr("d", function (d) {
         var o = {
           x: source.x0,
@@ -233,7 +239,7 @@ hierarchyViewer = function module() {
       .attr("d", elbow)
       .style("fill", "none")
       .style("stroke", "grey")
-      .style("stroke-width", "2px");
+      .style("stroke-width", "1px");
 
     // Transition exiting nodes to the parent's new position.
     link.exit().transition()
@@ -279,18 +285,20 @@ hierarchyViewer = function module() {
   // Toggle children on click.
   function click(d) {
 
-    if (d.children) {
-      d._children = d.children;
-      d.children = null;
-    } else {
-      d.children = d._children;
-      d._children = null;
+    if(d.data.key !== "Root" && d.data.key !== "Coleoptera"){
+        if (d.children) {
+          d._children = d.children;
+          d.children = null;
+        } else {
+          d.children = d._children;
+          d._children = null;
+        }
+        //collapseAll(root)
+        //expand(d)
+        update(d);
+        updateImageView(d);
+        //centerNode(newPath, obj.id);
     }
-    //collapseAll(root)
-    //expand(d)
-    update(d);
-    updateImageView(d);
-    //centerNode(newPath, obj.id);
 
   } //end of click
 
@@ -379,7 +387,7 @@ hierarchyViewer = function module() {
 
 
   function elbow(d, i) {
-    return "M" + d.source.y + "," + d.source.x +
+    return "M" + (d.source.y)+ "," + (d.source.x)+
       "V" + d.target.x + "H" + d.target.y;
   }
 
@@ -421,7 +429,7 @@ hierarchyViewer = function module() {
 
     var fadeColor = 1;
 
-    while (d.depth > 6) {
+    while (d.depth > 2) {
       d = d.parent;
     }
     var c = d3.lab(color(d.data.key))

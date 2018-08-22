@@ -512,14 +512,15 @@ li {
 #sunburst, #map{
 height: 470px;
 }
+
 #reftree {
-  height: 550px;
+  height: 650px;
   overflow-y: auto;
   overflow-x: auto;
 }
 
 #imageView {
-  height: 600px;
+  height: 700px;
   overflow-y: auto;
 }
 
