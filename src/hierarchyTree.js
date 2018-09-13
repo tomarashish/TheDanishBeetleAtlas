@@ -344,6 +344,7 @@ hierarchyViewer = function module() {
       nodeObject.data.key + "&key=" + phylumName + " ";
 
     console.log(phylumName)
+    
     // example request
     getCORS(phylumUrl, function (request) {
       var response = request.currentTarget.response || request.target.responseText;
